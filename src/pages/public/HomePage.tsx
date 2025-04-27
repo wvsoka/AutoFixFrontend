@@ -1,7 +1,8 @@
+import {PrimaryButton} from "../../components/buttons/PrimaryButton";
+
 export const HomePage = () => {
     return (
         <div className="flex flex-col items-center text-center font-sans bg-[#f5f9fc]">
-            {/* Hero section */}
             <section
                 className="w-full h-[450px] bg-cover bg-center relative flex items-center justify-center"
                 style={{ backgroundImage: "url('/hero-image.jpg')" }}
@@ -12,12 +13,8 @@ export const HomePage = () => {
                         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur rhoncus nunc nunc, vel tempus metus placerat in.
                     </p>
                     <div className="mt-6 flex flex-col sm:flex-row gap-4">
-                        <button className="bg-white text-blue-800 font-semibold px-6 py-2 rounded-lg border border-blue-800 shadow hover:bg-gray-100 transition">
-                            Zaloguj się
-                        </button>
-                        <button className="bg-white text-blue-800 font-semibold px-6 py-2 rounded-lg border border-blue-800 shadow hover:bg-gray-100 transition">
-                            Zarejestruj się
-                        </button>
+                        <PrimaryButton>Zaloguj się</PrimaryButton>
+                        <PrimaryButton>Zarejestruj się</PrimaryButton>
                     </div>
                 </div>
             </section>
