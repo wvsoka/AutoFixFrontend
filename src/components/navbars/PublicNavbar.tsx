@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import {PrimaryButton} from "../buttons/PrimaryButton";
 
 export const PublicNavbar = () => {
     const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -19,13 +20,9 @@ export const PublicNavbar = () => {
                 </Link>
 
                 <div className="relative">
-                    <button
-                        onClick={() => setDropdownOpen(!dropdownOpen)}
-                        className="bg-white text-[#3D7CA9] font-semibold px-4 py-2 rounded-lg border shadow hover:bg-gray-100 transition"
-                    >
+                    <PrimaryButton onClick={() => setDropdownOpen(!dropdownOpen)}>
                         Dołącz teraz
-                    </button>
-
+                    </PrimaryButton>
                     {dropdownOpen && (
                         <div className="absolute right-0 mt-2 bg-white text-black rounded shadow-md z-10 w-44">
                             <Link
