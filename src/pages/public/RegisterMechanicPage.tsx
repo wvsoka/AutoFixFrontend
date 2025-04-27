@@ -13,6 +13,8 @@ export const RegisterMechanicPage = () => {
         password: "",
         confirmPassword: "",
         name: "",
+        surname: "",
+        phone: "",
         address: "",
         city: "",
         zip_code: "",
@@ -58,8 +60,8 @@ export const RegisterMechanicPage = () => {
                 email: formData.email,
                 password: formData.password,
                 name: formData.name,
-                surname: "",
-                phone: "",
+                surname: formData.surname,
+                phone: formData.phone,
                 role: "mechanic",
                 address: formData.address,
                 city: formData.city,
@@ -101,6 +103,8 @@ export const RegisterMechanicPage = () => {
                         <InputField type="password" name="password" placeholder="Hasło" onChange={handleChange} required icon={<FiIcons.FiLock />} />
                         <InputField type="password" name="confirmPassword" placeholder="Powtórz hasło" onChange={handleChange} required icon={<FiIcons.FiLock />} />
                         <InputField type="text" name="name" placeholder="Nazwa warsztatu" onChange={handleChange} required icon={<FiIcons.FiHome />} />
+                        <InputField type="text" name="surname" placeholder="Nazwisko właściciela" onChange={handleChange} required icon={<FiIcons.FiUser />} />
+                        <InputField type="text" name="phone" placeholder="Telefon warsztatu" onChange={handleChange} required icon={<FiIcons.FiPhone />} />
                         <InputField type="text" name="address" placeholder="Adres warsztatu" onChange={handleChange} required icon={<FiIcons.FiMapPin />} />
                         <InputField type="text" name="city" placeholder="Miasto" onChange={handleChange} required icon={<FiIcons.FiMapPin />} />
                         <InputField type="text" name="zip_code" placeholder="Kod pocztowy" onChange={handleChange} required icon={<FiIcons.FiHash />} />
