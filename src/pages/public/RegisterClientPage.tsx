@@ -1,9 +1,9 @@
-import { useNavigate } from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import { useState } from "react";
-import axios from "axios";
 import { SecondaryButton } from "../../components/buttons/SecondaryButton";
 import { InputField } from "../../components/forms/InputField";
 import * as FiIcons from "react-icons/fi";
+import axiosInstance from "../../api/axiosInstance";
 
 
 export const RegisterClientPage = () => {
@@ -54,7 +54,7 @@ export const RegisterClientPage = () => {
         }
 
         try {
-            await axios.post("http://localhost:8000/api/auth/register/", {
+            await axiosInstance.post("/api/register/", {
                 email: formData.email,
                 password: formData.password,
                 name: formData.name,
@@ -107,6 +107,12 @@ export const RegisterClientPage = () => {
                             <SecondaryButton type="submit" className="w-full max-w-sm">
                                 Zarejestruj się
                             </SecondaryButton>
+                        </div>
+                        <div className="flex items-center justify-center mt-6 text-sm text-gray-600">
+                            <span>Jesteś mechanikiem?</span>
+                            <Link to="/register-mechanic" className="ml-1 text-blue-600 hover:underline">
+                                Załóż konto dla swojej firmy tutaj!
+                            </Link>
                         </div>
                     </form>
                 </div>

@@ -1,9 +1,9 @@
-import { useNavigate } from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import { useState } from "react";
-import axios from "axios";
 import { SecondaryButton } from "../../components/buttons/SecondaryButton";
 import { InputField } from "../../components/forms/InputField";
 import * as FiIcons from "react-icons/fi";
+import axiosInstance from "../../api/axiosInstance";
 
 export const RegisterMechanicPage = () => {
     const navigate = useNavigate();
@@ -53,6 +53,31 @@ export const RegisterMechanicPage = () => {
             setError("Wszystkie pola warsztatu muszą być wypełnione.");
             return;
         }
+        try {
+            await axiosInstance.post("/api/auth/register/", {
+                email: formData.email,
+                password: formData.password,
+                name: formData.name,
+                surname: "",
+                phone: "",
+                role: "mechanic",
+                address: formData.address,
+                city: formData.city,
+                zip_code: formData.zip_code,
+                nip: formData.nip,
+            });
+
+            setSuccessMessage("Rejestracja zakończona sukcesem! Przekierowuję do logowania...");
+            setTimeout(() => {
+                navigate("/login");
+            }, 2000);
+        } catch (err: any) {
+            if (err.response?.data) {
+                setError(Object.values(err.response.data).join(" "));
+            } else {
+                setError("Błąd rejestracji");
+            }
+        }
     };
 
     return (
@@ -85,6 +110,12 @@ export const RegisterMechanicPage = () => {
                             <SecondaryButton type="submit" className="w-full max-w-sm">
                                 Zarejestruj się
                             </SecondaryButton>
+                        </div>
+                        <div className="flex items-center justify-center mt-6 text-sm text-gray-600">
+                            <span>Jesteś klientem?</span>
+                            <Link to="/register-client" className="ml-1 text-blue-600 hover:underline">
+                                Zarejestruj się tutaj!
+                            </Link>
                         </div>
                     </form>
                 </div>
