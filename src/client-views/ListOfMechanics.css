@@ -48,7 +48,7 @@
     background-color: white;
     color: black;
     min-width: 150px;
-    box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
     z-index: 1;
     flex-direction: column;
 }
@@ -97,22 +97,30 @@
     padding: 20px;
 }
 
+/* --- POPRAWKI DLA RESPONSYWNOŚCI --- */
 .mechanic-card {
     background: white;
     display: flex;
+    flex-wrap: wrap; /* <- dodane */
     justify-content: space-between;
     align-items: center;
-    width: 1000px;
-    height: 105px;
+    width: 100%;
+    max-width: 1000px;
+    min-width: 0;
+    height: auto; /* <- zmiana: zamiast 105px na auto, żeby nie ściskało */
     padding: 15px;
     margin-bottom: 10px;
     border-radius: 5px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-sizing: border-box;
 }
 
 .mechanic-info {
     display: flex;
     align-items: center;
+    flex: 1 1 60%;
+    flex-wrap: wrap; /* pozwala zawijać dane */
+    min-width: 0;
 }
 
 .mechanic-avatar {
@@ -125,27 +133,30 @@
 
 .mechanic-details {
     text-align: left;
-    width: 700px;
+    flex: 1;
+    min-width: 0;
 }
 
 .mechanic-name {
     font-weight: bold;
     height: 30px;
+    margin-bottom: 5px;
 }
 
 .mechanic-address,
 .mechanic-support {
     font-size: 12px;
     color: #666;
-    width: 50%;
+    margin-bottom: 5px;
 }
 
 .mechanic-rating {
     display: flex;
     align-items: center;
     gap: 10px;
-    width: 148px;
-    height: 20px;
+    flex: 1 1 0;
+    justify-content: flex-start;
+    min-width: 0;
 }
 
 .details-button {
@@ -153,4 +164,90 @@
     border: none;
     font-size: 20px;
     cursor: pointer;
+}
+
+/* --- RESPONSYWNOŚĆ --- */
+@media (max-width: 1000px) {
+    .mechanic-card {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 15px;
+    }
+
+    .mechanic-info,
+    .mechanic-rating {
+        width: 100%;
+    }
+
+    .mechanic-rating {
+        margin-top: 10px;
+        justify-content: flex-start;
+    }
+
+    .search-bar {
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .search-section {
+        padding: 30px 15px;
+    }
+
+    .search-bar {
+        width: 100%;
+    }
+
+    .mechanic-card {
+        padding: 10px;
+        flex-direction: column;
+        align-items: flex-start;
+        height: auto;
+    }
+
+    .mechanic-name {
+        font-size: 14px;
+    }
+
+    .mechanic-address,
+    .mechanic-support {
+        font-size: 12px;
+        width: 100%;
+    }
+
+    .mechanic-avatar {
+        width: 60px;
+        height: 60px;
+    }
+}
+
+@media (max-width: 480px) {
+    .logo {
+        font-size: 20px;
+    }
+
+    .search-bar input {
+        padding: 8px;
+        font-size: 14px;
+    }
+
+    .mechanic-avatar {
+        width: 50px;
+        height: 50px;
+    }
+
+    .mechanic-name {
+        font-size: 12px;
+    }
+
+    .mechanic-address,
+    .mechanic-support {
+        font-size: 10px;
+        width: 100%;
+    }
 }
