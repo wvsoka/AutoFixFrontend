@@ -4,28 +4,6 @@
     min-height: 100vh;
 }
 
-.header {
-    background-color: #407298;
-    padding: 10px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: white;
-}
-
-.logo {
-    font-size: 24px;
-    font-weight: bold;
-}
-
-.logo span {
-    color: #e0e0e0;
-}
-
-.header-buttons {
-    display: flex;
-    align-items: center;
-}
 
 .search-button, .profile-button {
     background: none;
@@ -64,10 +42,27 @@
     display: flex;
 }
 
+
+
 .search-section {
     text-align: center;
     padding: 50px 20px;
     color: white;
+    height: 450px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+}
+
+
+.search-section h1 {
+    font-size: 48px;
+    font-weight: bold;
+    margin-bottom: 20px;
 }
 
 .search-bar {
