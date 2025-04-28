@@ -97,17 +97,17 @@
     padding: 20px;
 }
 
-/* --- POPRAWKI DLA RESPONSYWNOŚCI --- */
+
 .mechanic-card {
     background: white;
     display: flex;
-    flex-wrap: wrap; /* <- dodane */
+    flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
     width: 100%;
     max-width: 1000px;
     min-width: 0;
-    height: auto; /* <- zmiana: zamiast 105px na auto, żeby nie ściskało */
+    height: auto;
     padding: 15px;
     margin-bottom: 10px;
     border-radius: 5px;
@@ -119,7 +119,7 @@
     display: flex;
     align-items: center;
     flex: 1 1 60%;
-    flex-wrap: wrap; /* pozwala zawijać dane */
+    flex-wrap: wrap;
     min-width: 0;
 }
 
