@@ -93,6 +93,16 @@
     cursor: pointer;
 }
 
+.search-icon-svg {
+    color: black;
+    font-size: 24px;
+    transition: color 0.3s ease;
+}
+
+.search-icon:hover .search-icon-svg {
+    color: #457b9d;
+}
+
 .mechanic-list {
     padding: 20px;
     display: flex;
