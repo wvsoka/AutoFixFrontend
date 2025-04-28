@@ -102,6 +102,8 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    width: 1000px;
+    height: 105px;
     padding: 15px;
     margin-bottom: 10px;
     border-radius: 5px;
@@ -114,8 +116,8 @@
 }
 
 .mechanic-avatar {
-    width: 50px;
-    height: 50px;
+    width: 80px;
+    height: 80px;
     background: #ccc;
     border-radius: 50%;
     margin-right: 15px;
@@ -123,21 +125,27 @@
 
 .mechanic-details {
     text-align: left;
+    width: 700px;
 }
 
 .mechanic-name {
     font-weight: bold;
+    height: 30px;
 }
 
-.mechanic-address, .mechanic-support {
+.mechanic-address,
+.mechanic-support {
     font-size: 12px;
     color: #666;
+    width: 50%;
 }
 
 .mechanic-rating {
     display: flex;
     align-items: center;
     gap: 10px;
+    width: 148px;
+    height: 20px;
 }
 
 .details-button {
