@@ -5,6 +5,7 @@ import { InputField } from "../../components/forms/InputField";
 import { SecondaryButton } from "../../components/buttons/SecondaryButton";
 import axiosInstance from "../../api/axiosInstance";
 import * as FiIcons from "react-icons/fi";
+import { jwtDecode } from "jwt-decode";
 
 export const LoginPage = () => {
     const navigate = useNavigate();
@@ -33,11 +34,23 @@ export const LoginPage = () => {
             localStorage.setItem("accessToken", access);
             localStorage.setItem("refreshToken", refresh);
 
-            navigate("/");
+            const decoded: { role: string } = jwtDecode(access);
+            console.log("Decoded token:", decoded);
+
+            //navigate("/mechanic/profile");
+
+
+            //     try {
+        //         await axiosInstance.get("/api/mechanic/me/");
+        //         navigate("/mechanic/profile");
+        //     } catch {
+        //         navigate("/");
+        //     }
         } catch (err: any) {
             setError("Nieprawidłowy email lub hasło.");
         }
     };
+
 
     return (
         <div className="min-h-screen bg-[#EEF6FA] flex items-center justify-center px-4">
