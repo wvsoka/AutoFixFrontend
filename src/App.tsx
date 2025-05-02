@@ -4,9 +4,10 @@ import { HomePage } from "./pages/public/HomePage";
 import { RegisterClientPage } from "./pages/public/RegisterClientPage";
 import { RegisterMechanicPage } from "./pages/public/RegisterMechanicPage";
 import {LoginPage} from "./pages/public/LoginPage";
-import ListOfMechanics from "./pages/client-views/ListOfMechanics";
 import {MechanicProfilePage} from "./pages/mechanic/MechanicProfilePage";
 import {MechanicPrivateLayout} from "./layouts/MechanicPrivateLayout";
+import ListOfMechanics from "./pages/client/ListOfMechanics";
+import WorkshopPage from "./pages/client/WorkshopPage";
 
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
                     <Route path="/mechanic/profile" element={<MechanicProfilePage />} />
                 </Route>
                 <Route path="/services" element={<ListOfMechanics />} />
+                <Route path="/workshop" element={<WorkshopPage />} />
             </Routes>
         </BrowserRouter>
     );
