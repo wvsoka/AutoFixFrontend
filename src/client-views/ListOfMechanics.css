@@ -1,0 +1,260 @@
+.client-mech-list {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    min-height: 100vh;
+}
+
+
+.search-button, .profile-button {
+    background: none;
+    border: none;
+    color: white;
+    margin-left: 20px;
+    font-size: 16px;
+    cursor: pointer;
+    position: relative;
+}
+
+.profile-dropdown {
+    position: relative;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: white;
+    color: black;
+    min-width: 150px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    z-index: 1;
+    flex-direction: column;
+}
+
+.dropdown-content a {
+    padding: 10px;
+    text-decoration: none;
+    display: block;
+    color: black;
+}
+
+.profile-dropdown:hover .dropdown-content {
+    display: flex;
+}
+
+
+
+.search-section {
+    text-align: center;
+    padding: 50px 20px;
+    color: white;
+    height: 450px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+}
+
+
+.search-section h1 {
+    font-size: 48px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.search-bar {
+    margin-top: 20px;
+    display: inline-flex;
+    width: 60%;
+    background: white;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.search-bar input {
+    flex: 1;
+    padding: 10px;
+    border: none;
+}
+
+.search-icon {
+    background: none;
+    border: none;
+    padding: 10px;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.search-icon-svg {
+    color: black;
+    font-size: 24px;
+    transition: color 0.3s ease;
+}
+
+.search-icon:hover .search-icon-svg {
+    color: #457b9d;
+}
+
+.mechanic-list {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.mechanic-card {
+    background: white;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 1000px;
+    min-width: 0;
+    height: auto;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-sizing: border-box;
+}
+
+.mechanic-info {
+    display: flex;
+    align-items: center;
+    flex: 1 1 60%;
+    flex-wrap: wrap;
+    min-width: 0;
+}
+
+.mechanic-avatar {
+    width: 80px;
+    height: 80px;
+    background: #ccc;
+    border-radius: 50%;
+    margin-right: 15px;
+}
+
+.mechanic-details {
+    text-align: left;
+    flex: 1;
+    min-width: 0;
+}
+
+.mechanic-name {
+    font-weight: bold;
+    height: 30px;
+    margin-bottom: 5px;
+}
+
+.mechanic-address,
+.mechanic-support {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 5px;
+}
+
+.mechanic-rating {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1 1 0;
+    justify-content: flex-start;
+    min-width: 0;
+}
+
+.details-button {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+/* --- RESPONSYWNOŚĆ --- */
+@media (max-width: 1000px) {
+    .mechanic-card {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 15px;
+    }
+
+    .mechanic-info,
+    .mechanic-rating {
+        width: 100%;
+    }
+
+    .mechanic-rating {
+        margin-top: 10px;
+        justify-content: flex-start;
+    }
+
+    .search-bar {
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .search-section {
+        padding: 30px 15px;
+    }
+
+    .search-bar {
+        width: 100%;
+    }
+
+    .mechanic-card {
+        padding: 10px;
+        flex-direction: column;
+        align-items: flex-start;
+        height: auto;
+    }
+
+    .mechanic-name {
+        font-size: 14px;
+    }
+
+    .mechanic-address,
+    .mechanic-support {
+        font-size: 12px;
+        width: 100%;
+    }
+
+    .mechanic-avatar {
+        width: 60px;
+        height: 60px;
+    }
+}
+
+@media (max-width: 480px) {
+    .logo {
+        font-size: 20px;
+    }
+
+    .search-bar input {
+        padding: 8px;
+        font-size: 14px;
+    }
+
+    .mechanic-avatar {
+        width: 50px;
+        height: 50px;
+    }
+
+    .mechanic-name {
+        font-size: 12px;
+    }
+
+    .mechanic-address,
+    .mechanic-support {
+        font-size: 10px;
+        width: 100%;
+    }
+}

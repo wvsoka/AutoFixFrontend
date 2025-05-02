@@ -1,0 +1,20 @@
+.arrow-right-button {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background-color: #1D3557;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.arrow-right-button:hover {
+    background-color: #457B9D; /* kolor po najechaniu */
+}
+
+.arrow-icon {
+    color: #F7F4EC;
+}
