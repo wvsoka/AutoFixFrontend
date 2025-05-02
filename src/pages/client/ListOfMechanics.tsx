@@ -1,7 +1,7 @@
 import React from 'react';
 import './ListOfMechanics.css';
-import ClientNavbar from "../components/navbars/ClientNavbar";
-import ArrowRightButton from "../components/buttons/ArrowRightButton";
+import ClientNavbar from "../../components/navbars/ClientNavbar";
+import ArrowRightButton from "../../components/buttons/ArrowRightButton";
 import SearchIcon from '@mui/icons-material/Search';
 
 const ListOfMechanics: React.FC = () => {

@@ -4,7 +4,7 @@ import { HomePage } from "./pages/public/HomePage";
 import { RegisterClientPage } from "./pages/public/RegisterClientPage";
 import { RegisterMechanicPage } from "./pages/public/RegisterMechanicPage";
 import {LoginPage} from "./pages/public/LoginPage";
-import ListOfMechanics from "./client-views/ListOfMechanics";
+import ListOfMechanics from "./pages/client-views/ListOfMechanics";
 import {MechanicProfilePage} from "./pages/mechanic/MechanicProfilePage";
 import {MechanicPrivateLayout} from "./layouts/MechanicPrivateLayout";
 
