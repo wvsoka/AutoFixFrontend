@@ -27,6 +27,7 @@ export const MechanicProfilePage = () => {
         }, {} as Record<string, { open: string; close: string; id: number | null }>),
     });
 
+    const [mechanicInfo, setMechanicInfo] = useState({ full_name: "", email: "" });
     const [success, setSuccess] = useState("");
     const [error, setError] = useState("");
 
@@ -35,6 +36,10 @@ export const MechanicProfilePage = () => {
             .then((res) => {
                 const data = res.data;
                 setFormData((prev) => ({ ...prev, ...data }));
+                setMechanicInfo({
+                    full_name: data.full_name || "",
+                    email: data.email || "",
+                });
             });
 
         axiosInstance.get("/api/mechanic/working-hours/")
@@ -111,7 +116,7 @@ export const MechanicProfilePage = () => {
     return (
         <div className="flex flex-col lg:flex-row min-h-screen bg-[#EEF6FA]">
             <div className="flex-1 p-8">
-                <h1 className="text-2xl font-bold text-[#1D3557] mb-6">Witaj, Marlena!</h1>
+                <h1 className="text-2xl font-bold text-[#1D3557] mb-6">Witaj, {mechanicInfo.full_name || "Mechaniku"}!</h1>
                 <h2 className="text-xl font-semibold mb-4">Dodaj lub uzupełnij informacje o swojej firmie</h2>
 
                 {success && <div className="text-green-600 mb-4">{success}</div>}
@@ -183,8 +188,8 @@ export const MechanicProfilePage = () => {
                     <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center text-2xl text-gray-600">
                         <span className="material-icons">person</span>
                     </div>
-                    <p className="font-semibold mt-2">Marlena Kowalska</p>
-                    <p className="text-sm text-gray-500">marlena@email.com</p>
+                    <p className="font-semibold mt-2">{mechanicInfo.full_name}</p>
+                    <p className="text-sm text-gray-500">{mechanicInfo.email}</p>
                 </div>
 
                 <nav className="w-full flex flex-col gap-2 text-sm">

@@ -14,11 +14,7 @@ export const RegisterMechanicPage = () => {
         confirmPassword: "",
         name: "",
         surname: "",
-        phone: "",
-        address: "",
-        city: "",
-        zip_code: "",
-        nip: "",
+        phone: ""
     });
 
     const [error, setError] = useState("");
@@ -36,25 +32,11 @@ export const RegisterMechanicPage = () => {
             return;
         }
 
-        if (!/^\S+@\S+\.\S+$/.test(formData.email)) {
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
             setError("Podaj poprawny adres email.");
             return;
         }
 
-        if (!/^\d{5}$/.test(formData.zip_code.replace("-", ""))) {
-            setError("Podaj poprawny kod pocztowy (XX-XXX).");
-            return;
-        }
-
-        if (!/^\d{10}$/.test(formData.nip)) {
-            setError("NIP musi składać się z 10 cyfr.");
-            return;
-        }
-
-        if (!formData.name.trim() || !formData.address.trim() || !formData.city.trim()) {
-            setError("Wszystkie pola warsztatu muszą być wypełnione.");
-            return;
-        }
         try {
             await axiosInstance.post("/api/auth/register/", {
                 email: formData.email,
@@ -62,11 +44,7 @@ export const RegisterMechanicPage = () => {
                 name: formData.name,
                 surname: formData.surname,
                 phone: formData.phone,
-                role: "mechanic",
-                address: formData.address,
-                city: formData.city,
-                zip_code: formData.zip_code,
-                nip: formData.nip,
+                role: "mechanic"
             });
 
             setSuccessMessage("Rejestracja zakończona sukcesem! Przekierowuję do logowania...");
@@ -102,13 +80,9 @@ export const RegisterMechanicPage = () => {
                         <InputField type="email" name="email" placeholder="Adres email" onChange={handleChange} required icon={<FiIcons.FiMail />} />
                         <InputField type="password" name="password" placeholder="Hasło" onChange={handleChange} required icon={<FiIcons.FiLock />} />
                         <InputField type="password" name="confirmPassword" placeholder="Powtórz hasło" onChange={handleChange} required icon={<FiIcons.FiLock />} />
-                        <InputField type="text" name="name" placeholder="Nazwa warsztatu" onChange={handleChange} required icon={<FiIcons.FiHome />} />
-                        <InputField type="text" name="surname" placeholder="Nazwisko właściciela" onChange={handleChange} required icon={<FiIcons.FiUser />} />
-                        <InputField type="text" name="phone" placeholder="Telefon warsztatu" onChange={handleChange} required icon={<FiIcons.FiPhone />} />
-                        <InputField type="text" name="address" placeholder="Adres warsztatu" onChange={handleChange} required icon={<FiIcons.FiMapPin />} />
-                        <InputField type="text" name="city" placeholder="Miasto" onChange={handleChange} required icon={<FiIcons.FiMapPin />} />
-                        <InputField type="text" name="zip_code" placeholder="Kod pocztowy" onChange={handleChange} required icon={<FiIcons.FiHash />} />
-                        <InputField type="text" name="nip" placeholder="NIP" onChange={handleChange} required icon={<FiIcons.FiHash />} />
+                        <InputField type="text" name="name" placeholder="Imię" onChange={handleChange} required icon={<FiIcons.FiUser />} />
+                        <InputField type="text" name="surname" placeholder="Nazwisko" onChange={handleChange} required icon={<FiIcons.FiUser />} />
+                        <InputField type="text" name="phone" placeholder="Telefon" onChange={handleChange} required icon={<FiIcons.FiPhone />} />
 
                         <div className="flex justify-center mt-6">
                             <SecondaryButton type="submit" className="w-full max-w-sm">
