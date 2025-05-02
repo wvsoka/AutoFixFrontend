@@ -45,13 +45,28 @@ export const MechanicProfilePage = () => {
         axiosInstance.get("/api/mechanic/working-hours/")
             .then((res) => {
                 const updatedHours = { ...formData.opening_hours };
+
+                const reverseDayMap: Record<string, string> = {
+                    "monday": "poniedziałek",
+                    "tuesday": "wtorek",
+                    "wednesday": "środa",
+                    "thursday": "czwartek",
+                    "friday": "piątek",
+                    "saturday": "sobota",
+                    "sunday": "niedziela",
+                };
+
                 res.data.forEach((entry: any) => {
-                    updatedHours[entry.day] = {
-                        open: entry.start_time.slice(0, 5),
-                        close: entry.end_time.slice(0, 5),
-                        id: entry.id,
-                    };
+                    const plDay = reverseDayMap[entry.day_of_the_week];
+                    if (plDay) {
+                        updatedHours[plDay] = {
+                            open: entry.open_time.slice(0, 5),
+                            close: entry.close_time.slice(0, 5),
+                            id: entry.id,
+                        };
+                    }
                 });
+
                 setFormData((prev) => ({
                     ...prev,
                     opening_hours: updatedHours,
@@ -59,6 +74,7 @@ export const MechanicProfilePage = () => {
             })
             .catch(() => setError("Nie udało się załadować godzin otwarcia."));
     }, []);
+
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -77,6 +93,17 @@ export const MechanicProfilePage = () => {
         }));
     };
 
+    const dayMap: Record<string, string> = {
+        "poniedziałek": "monday",
+        "wtorek": "tuesday",
+        "środa": "wednesday",
+        "czwartek": "thursday",
+        "piątek": "friday",
+        "sobota": "saturday",
+        "niedziela": "sunday",
+    };
+
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
@@ -94,9 +121,9 @@ export const MechanicProfilePage = () => {
                 if (!hour.open || !hour.close) return;
 
                 const payload = {
-                    day,
-                    start_time: hour.open + ":00",
-                    end_time: hour.close + ":00",
+                    day_of_the_week: dayMap[day],
+                    open_time: hour.open + ":00",
+                    close_time: hour.close + ":00",
                 };
 
                 if (hour.id) {
@@ -112,6 +139,7 @@ export const MechanicProfilePage = () => {
             setError("Wystąpił błąd przy zapisie danych.");
         }
     };
+
 
     return (
         <div className="flex flex-col lg:flex-row min-h-screen bg-[#EEF6FA]">
@@ -135,10 +163,10 @@ export const MechanicProfilePage = () => {
                         <label className="block text-sm font-medium mb-1">Ulica i numer</label>
                         <InputField name="address" value={formData.address} onChange={handleChange} required />
                     </div>
-                    <div>
-                        <label className="block text-sm font-medium mb-1">Kod pocztowy</label>
-                        <InputField name="zip_code" value={formData.zip_code} onChange={handleChange} required />
-                    </div>
+                    {/*<div>*/}
+                    {/*    <label className="block text-sm font-medium mb-1">Kod pocztowy</label>*/}
+                    {/*    <InputField name="zip_code" value={formData.zip_code} onChange={handleChange} required />*/}
+                    {/*</div>*/}
                     <div>
                         <label className="block text-sm font-medium mb-1">Miasto</label>
                         <InputField name="city" value={formData.city} onChange={handleChange} required />
