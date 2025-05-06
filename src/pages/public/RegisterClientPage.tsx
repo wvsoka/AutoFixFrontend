@@ -54,7 +54,7 @@ export const RegisterClientPage = () => {
         }
 
         try {
-            await axiosInstance.post("/api/register/", {
+            await axiosInstance.post("/api/auth/register/", {
                 email: formData.email,
                 password: formData.password,
                 name: formData.name,

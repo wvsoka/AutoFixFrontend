@@ -27,6 +27,7 @@ export const MechanicProfilePage = () => {
         }, {} as Record<string, { open: string; close: string; id: number | null }>),
     });
 
+    const [mechanicInfo, setMechanicInfo] = useState({ full_name: "", email: "" });
     const [success, setSuccess] = useState("");
     const [error, setError] = useState("");
 
@@ -35,18 +36,37 @@ export const MechanicProfilePage = () => {
             .then((res) => {
                 const data = res.data;
                 setFormData((prev) => ({ ...prev, ...data }));
+                setMechanicInfo({
+                    full_name: data.full_name || "",
+                    email: data.email || "",
+                });
             });
 
         axiosInstance.get("/api/mechanic/working-hours/")
             .then((res) => {
                 const updatedHours = { ...formData.opening_hours };
+
+                const reverseDayMap: Record<string, string> = {
+                    "monday": "poniedziałek",
+                    "tuesday": "wtorek",
+                    "wednesday": "środa",
+                    "thursday": "czwartek",
+                    "friday": "piątek",
+                    "saturday": "sobota",
+                    "sunday": "niedziela",
+                };
+
                 res.data.forEach((entry: any) => {
-                    updatedHours[entry.day] = {
-                        open: entry.start_time.slice(0, 5),
-                        close: entry.end_time.slice(0, 5),
-                        id: entry.id,
-                    };
+                    const plDay = reverseDayMap[entry.day_of_the_week];
+                    if (plDay) {
+                        updatedHours[plDay] = {
+                            open: entry.open_time.slice(0, 5),
+                            close: entry.close_time.slice(0, 5),
+                            id: entry.id,
+                        };
+                    }
                 });
+
                 setFormData((prev) => ({
                     ...prev,
                     opening_hours: updatedHours,
@@ -54,6 +74,7 @@ export const MechanicProfilePage = () => {
             })
             .catch(() => setError("Nie udało się załadować godzin otwarcia."));
     }, []);
+
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -72,6 +93,17 @@ export const MechanicProfilePage = () => {
         }));
     };
 
+    const dayMap: Record<string, string> = {
+        "poniedziałek": "monday",
+        "wtorek": "tuesday",
+        "środa": "wednesday",
+        "czwartek": "thursday",
+        "piątek": "friday",
+        "sobota": "saturday",
+        "niedziela": "sunday",
+    };
+
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
@@ -89,9 +121,9 @@ export const MechanicProfilePage = () => {
                 if (!hour.open || !hour.close) return;
 
                 const payload = {
-                    day,
-                    start_time: hour.open + ":00",
-                    end_time: hour.close + ":00",
+                    day_of_the_week: dayMap[day],
+                    open_time: hour.open + ":00",
+                    close_time: hour.close + ":00",
                 };
 
                 if (hour.id) {
@@ -108,10 +140,11 @@ export const MechanicProfilePage = () => {
         }
     };
 
+
     return (
         <div className="flex flex-col lg:flex-row min-h-screen bg-[#EEF6FA]">
             <div className="flex-1 p-8">
-                <h1 className="text-2xl font-bold text-[#1D3557] mb-6">Witaj, Marlena!</h1>
+                <h1 className="text-2xl font-bold text-[#1D3557] mb-6">Witaj, {mechanicInfo.full_name || "Mechaniku"}!</h1>
                 <h2 className="text-xl font-semibold mb-4">Dodaj lub uzupełnij informacje o swojej firmie</h2>
 
                 {success && <div className="text-green-600 mb-4">{success}</div>}
@@ -130,10 +163,10 @@ export const MechanicProfilePage = () => {
                         <label className="block text-sm font-medium mb-1">Ulica i numer</label>
                         <InputField name="address" value={formData.address} onChange={handleChange} required />
                     </div>
-                    <div>
-                        <label className="block text-sm font-medium mb-1">Kod pocztowy</label>
-                        <InputField name="zip_code" value={formData.zip_code} onChange={handleChange} required />
-                    </div>
+                    {/*<div>*/}
+                    {/*    <label className="block text-sm font-medium mb-1">Kod pocztowy</label>*/}
+                    {/*    <InputField name="zip_code" value={formData.zip_code} onChange={handleChange} required />*/}
+                    {/*</div>*/}
                     <div>
                         <label className="block text-sm font-medium mb-1">Miasto</label>
                         <InputField name="city" value={formData.city} onChange={handleChange} required />
@@ -183,8 +216,8 @@ export const MechanicProfilePage = () => {
                     <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center text-2xl text-gray-600">
                         <span className="material-icons">person</span>
                     </div>
-                    <p className="font-semibold mt-2">Marlena Kowalska</p>
-                    <p className="text-sm text-gray-500">marlena@email.com</p>
+                    <p className="font-semibold mt-2">{mechanicInfo.full_name}</p>
+                    <p className="text-sm text-gray-500">{mechanicInfo.email}</p>
                 </div>
 
                 <nav className="w-full flex flex-col gap-2 text-sm">

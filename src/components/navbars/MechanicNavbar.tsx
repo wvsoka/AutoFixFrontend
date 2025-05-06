@@ -23,7 +23,7 @@ export const MechanicNavbar = () => {
                     <Link to="/mechanic/calendar" className="hover:underline">
                         Mój kalendarz
                     </Link>
-                    <Link to="/mechanic/services" className="hover:underline">
+                    <Link to="/mechanic/myservices" className="hover:underline">
                         Moje usługi
                     </Link>
                     <Link
