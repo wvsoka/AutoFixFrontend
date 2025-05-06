@@ -5,12 +5,11 @@ import {SecondaryButton} from "../buttons/SecondaryButton";
 interface ServiceTileProps {
     title: string;
     duration: string;
-    description: string;
     price: string;
     image?: string;
 }
 
-const ServiceTile: React.FC<ServiceTileProps> = ({ title, duration, description, price, image }) => {
+const ServiceTile: React.FC<ServiceTileProps> = ({ title, duration, price, image }) => {
     return (
         <div className="service-tile">
             <div className="tile-left">
@@ -18,7 +17,6 @@ const ServiceTile: React.FC<ServiceTileProps> = ({ title, duration, description,
                 <div className="service-info">
                     <h3>{title}</h3>
                     <p className="duration">Czas trwania: {duration}</p>
-                    <p className="description">{description}</p>
                 </div>
             </div>
             <div className="tile-right">

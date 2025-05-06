@@ -19,7 +19,7 @@ const WorkshopPage: React.FC = () => {
                     className="workshop-image"
                 />
                 <div className="workshop-info">
-                    <h1>Lux Auto Centrum</h1>
+                    <h1>Przykładowa nazwa mechanika</h1>
                     <p>Mickiewicza 174, 54-196 Szczecin</p>
                 </div>
             </div>
@@ -29,21 +29,18 @@ const WorkshopPage: React.FC = () => {
                     <ServiceTile
                         title="Serwis klimatyzacji"
                         duration="2 godziny"
-                        description="Opis opis opis opis opis opis opis opis…"
                         price="200-350 zł"
                         image="/placeholder.svg"
                     />
                     <ServiceTile
                         title="Wymiana opon"
                         duration="1 godzina"
-                        description="Sezonowa wymiana opon letnich i zimowych."
                         price="50-100 zł"
                         image="/placeholder.svg"
                     />
                     <ServiceTile
                         title="Diagnostyka"
                         duration="30 minut"
-                        description="Szybka diagnostyka komputerowa pojazdu."
                         price="100 zł"
                         image="/placeholder.svg"
                     />
