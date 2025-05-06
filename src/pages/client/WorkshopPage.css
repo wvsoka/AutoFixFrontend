@@ -4,6 +4,48 @@
     align-items: flex-start;
     gap: 20px;
     margin-bottom: 40px;
+    padding: 10px;
+}
+
+.header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+    padding: 20px;
+}
+
+.left-side {
+    display: flex;
+    flex-direction: column;
+    max-width: 70%;
+    flex: 1;
+    gap: 10px;
+}
+
+.right-side {
+    width: 30%;
+}
+
+.workshop-image {
+    width: 100%;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    object-fit: cover;
+}
+
+.workshop-info {
+    margin-top: 10px;
+    text-align: center;
+
+}
+
+.services-wrapper {
+    display: flex;
+    justify-content: center;
+    width: 100%;
 }
 
 .services-section {
@@ -11,12 +53,9 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
+    max-width: 800px;
 }
 
-.details-card {
-    flex-shrink: 0;
-    width: 280px;
-}
 
 .centered-rating {
     display: flex;
@@ -29,3 +68,45 @@
     flex-direction: column;
     gap: 20px;
 }
+.opinions-wrapper {
+    display: flex;
+    justify-content: center;
+}
+
+.opinions-wrapper > * {
+    width: 100%;
+    max-width: 600px;
+}
+
+@media (max-width: 768px) {
+    .header-section {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .left-side,
+    .right-side {
+        width: 100%;
+        max-width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+
+    .right-side {
+        margin-top: 20px;
+    }
+
+    .details-card {
+        width: 100%;
+        max-width: 360px;
+    }
+
+    .workshop-image {
+        max-width: 700px;
+    }
+
+    .workshop-info {
+        text-align: center;
+    }
+}
+
