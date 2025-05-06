@@ -1,0 +1,77 @@
+
+.settings-container h1 {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    margin-top: 1.5rem;
+    color: #1D3557;
+    text-align: center;
+}
+
+.settings-container h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    margin-top: 1.5rem;
+    color: #1D3557;
+    text-align: center;
+}
+
+.settings-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.settings-form .form-group {
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 400px;
+}
+
+.settings-form label {
+    font-weight: 500;
+    margin-bottom: 0.3rem;
+}
+
+.settings-form input {
+    padding: 0.6rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+    max-width: 400px;
+}
+
+.save-button {
+    margin-top: 1.5rem;
+    padding: 0.8rem 1.5rem;
+    background-color: #457B9D;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.save-button:hover {
+    background-color: #1D3557;
+}
+
+.success-message {
+    color: #369f36;
+    margin-top: 1rem;
+}
+
+.error-message {
+    color: #971c1c;
+    margin-top: 1rem;
+}
+
+.section-divider {
+    width: 100%;
+    max-width: 600px;
+    border: none;
+    border-top: 2px solid #457b9d;
+    margin: 2rem auto;
+}
