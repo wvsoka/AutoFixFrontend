@@ -10,6 +10,7 @@ import ListOfMechanics from "./pages/client/ListOfMechanics";
 import WorkshopPage from "./pages/client/WorkshopPage";
 import { MechanicMyServicesPage } from "./pages/mechanic/MechanicMyServicesPage";
 import {SettingsPage} from "./pages/client/SettingsPage";
+import MyOpinionsPage from "./pages/client/MyOpinionsPage";
 
 
 
@@ -30,6 +31,7 @@ function App() {
                 <Route path="/services" element={<ListOfMechanics />} />
                 <Route path="/workshop" element={<WorkshopPage />} />
                 <Route path="/client/settings" element={<SettingsPage />} />
+                <Route path="/client/my-opinions" element={<MyOpinionsPage />}/>
             </Routes>
         </BrowserRouter>
     );
