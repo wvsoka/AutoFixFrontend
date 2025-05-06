@@ -9,6 +9,7 @@ import {MechanicPrivateLayout} from "./layouts/MechanicPrivateLayout";
 import ListOfMechanics from "./pages/client/ListOfMechanics";
 import WorkshopPage from "./pages/client/WorkshopPage";
 import { MechanicMyServicesPage } from "./pages/mechanic/MechanicMyServicesPage";
+import {SettingsPage} from "./pages/client/SettingsPage";
 
 
 
@@ -28,6 +29,7 @@ function App() {
                 </Route>
                 <Route path="/services" element={<ListOfMechanics />} />
                 <Route path="/workshop" element={<WorkshopPage />} />
+                <Route path="/client/settings" element={<SettingsPage />} />
             </Routes>
         </BrowserRouter>
     );
