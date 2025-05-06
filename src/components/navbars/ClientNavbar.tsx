@@ -24,21 +24,21 @@ const ClientNavbar = () => {
                     {dropdownOpen && (
                         <div className="absolute right-0 mt-2 bg-white text-black rounded shadow-md z-10 w-44">
                             <Link
-                                to="/client-settings"
+                                to="/client/settings"
                                 className="block px-4 py-2 hover:bg-gray-100"
                                 onClick={() => setDropdownOpen(false)}
                             >
                                 Ustawienia
                             </Link>
                             <Link
-                                to="/my-visits"
+                                to="/client/my-visits"
                                 className="block px-4 py-2 hover:bg-gray-100"
                                 onClick={() => setDropdownOpen(false)}
                             >
                                 Moje wizyty
                             </Link>
                             <Link
-                                to="/my-opinions"
+                                to="/client/my-opinions"
                                 className="block px-4 py-2 hover:bg-gray-100"
                                 onClick={() => setDropdownOpen(false)}
                             >
