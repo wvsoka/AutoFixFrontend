@@ -12,7 +12,7 @@ export const SecondaryButton = ({ onClick, children, type = "button" }: PrimaryB
         <button
             type={type}
             onClick={onClick}
-            className="bg-[#457B9D] text-white font-semibold px-6 py-2 rounded-lg hover:bg-[#1D3557] transition shadow"
+            className="bg-[#1D3557] text-white font-semibold px-6 py-2 rounded-lg hover:bg-[#457B9D] transition shadow"
         >
             {children}
         </button>

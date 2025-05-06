@@ -44,7 +44,6 @@ export const PublicNavbar = () => {
                 </div>
 
                 <div className="hidden md:flex items-center gap-6">
-                    <Link to="/services" className="hover:underline">Usługi</Link>
                     <Link to="/login" className="hover:underline">Zaloguj się</Link>
 
                     <div className="relative" ref={dropdownRef}>

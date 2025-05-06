@@ -1,0 +1,47 @@
+.workshop-details-card {
+    background-color: #f8f9fa;
+    border-radius: 16px;
+    padding: 24px;
+    max-width: 300px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.workshop-details-card h3 {
+    font-size: 20px;
+    margin-bottom: 8px;
+}
+
+.workshop-details-card .description {
+    font-size: 14px;
+    color: #444;
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+.workshop-details-card h4 {
+    font-size: 16px;
+    margin-bottom: 8px;
+}
+
+.opening-hours {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 14px;
+}
+
+.opening-hours li {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 4px;
+}
+
+.day.green {
+    color: green;
+    font-weight: bold;
+}
+
+.day.red {
+    color: red;
+    font-weight: bold;
+}
