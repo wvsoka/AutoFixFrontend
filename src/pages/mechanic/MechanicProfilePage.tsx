@@ -4,15 +4,7 @@ import { InputField } from "../../components/forms/InputField";
 import { SecondaryButton } from "../../components/buttons/SecondaryButton";
 import { MechanicSidebar } from "../../components/sidebars/MechanicSidebar";
 
-const days = [
-    "poniedziałek",
-    "wtorek",
-    "środa",
-    "czwartek",
-    "piątek",
-    "sobota",
-    "niedziela",
-];
+const days = ["poniedziałek", "wtorek", "środa", "czwartek", "piątek", "sobota", "niedziela"];
 
 export const MechanicProfilePage: React.FC = () => {
     const [formData, setFormData] = useState({
@@ -27,24 +19,20 @@ export const MechanicProfilePage: React.FC = () => {
             return acc;
         }, {} as Record<string, { open: string; close: string; id: number | null }>),
     });
-
     const [mechanicInfo, setMechanicInfo] = useState({ full_name: "", email: "" });
     const [success, setSuccess] = useState("");
     const [error, setError] = useState("");
 
     useEffect(() => {
-        // Pobranie danych mechanika
         axiosInstance.get("/api/mechanic/me/")
-            .then((res) => {
+            .then(res => {
                 const data = res.data;
-                setFormData((prev) => ({ ...prev, ...data }));
+                setFormData(prev => ({ ...prev, ...data }));
                 setMechanicInfo({ full_name: data.full_name || "", email: data.email || "" });
             })
             .catch(() => setError("Nie udało się załadować danych mechanika."));
-
-        // Pobranie godzin otwarcia
         axiosInstance.get("/api/mechanic/working-hours/")
-            .then((res) => {
+            .then(res => {
                 const updatedHours = { ...formData.opening_hours };
                 const reverseDayMap: Record<string, string> = {
                     monday: "poniedziałek",
@@ -65,7 +53,7 @@ export const MechanicProfilePage: React.FC = () => {
                         };
                     }
                 });
-                setFormData((prev) => ({ ...prev, opening_hours: updatedHours }));
+                setFormData(prev => ({ ...prev, opening_hours: updatedHours }));
             })
             .catch(() => setError("Nie udało się załadować godzin otwarcia."));
     }, []);
@@ -75,7 +63,7 @@ export const MechanicProfilePage: React.FC = () => {
     };
 
     const handleHourChange = (day: string, field: "open" | "close", value: string) => {
-        setFormData((prev) => ({
+        setFormData(prev => ({
             ...prev,
             opening_hours: {
                 ...prev.opening_hours,
@@ -97,7 +85,6 @@ export const MechanicProfilePage: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            // Aktualizacja danych firmy
             await axiosInstance.patch("/api/mechanic/me/", {
                 name: formData.name,
                 address: formData.address,
@@ -106,13 +93,9 @@ export const MechanicProfilePage: React.FC = () => {
                 phone: formData.phone,
                 description: formData.description,
             });
-
-            // Aktualizacja godzin otwarcia
-            const promises = days.map((day) => {
+            const promises = days.map(day => {
                 const hour = formData.opening_hours[day];
-                if (!hour.open || !hour.close) {
-                    return Promise.resolve();
-                }
+                if (!hour.open || !hour.close) return Promise.resolve();
                 const payload = {
                     day_of_the_week: dayMap[day],
                     open_time: `${hour.open}:00`,
@@ -130,71 +113,52 @@ export const MechanicProfilePage: React.FC = () => {
     };
 
     return (
-        <div className="flex flex-row-reverse min-h-screen bg-[#EEF6FA]">
+        <div className="flex flex-col-reverse lg:flex-row-reverse min-h-screen bg-[#EEF6FA]">
             <MechanicSidebar fullName={mechanicInfo.full_name} email={mechanicInfo.email} />
-            <div className="flex-1 p-8">
-                <h1 className="text-2xl font-bold text-[#1D3557] mb-6">
-                    Witaj, {mechanicInfo.full_name || "Mechaniku"}!
-                </h1>
-                <h2 className="text-xl font-semibold mb-4">Dane firmy</h2>
-
+            <main className="flex-1 p-4 sm:p-8">
+                <h1 className="text-2xl sm:text-3xl font-bold text-[#1D3557] mb-4">Witaj, {mechanicInfo.full_name || "Mechaniku"}!</h1>
+                <h2 className="text-xl sm:text-2xl font-semibold mb-4">Dane firmy</h2>
                 {success && <div className="text-green-600 mb-4">{success}</div>}
                 {error && <div className="text-red-600 mb-4">{error}</div>}
-
-                <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label className="block text-sm font-medium mb-1">Nazwa zakładu</label>
+                        <label className="block text-sm sm:text-base font-medium mb-1">Nazwa zakładu</label>
                         <InputField name="name" value={formData.name} onChange={handleChange} required />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium mb-1">Numer kontaktowy</label>
+                        <label className="block text-sm sm:text-base font-medium mb-1">Numer kontaktowy</label>
                         <InputField name="phone" value={formData.phone} onChange={handleChange} required />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium mb-1">Ulica i numer</label>
+                        <label className="block text-sm sm:text-base font-medium mb-1">Ulica i numer</label>
                         <InputField name="address" value={formData.address} onChange={handleChange} required />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium mb-1">Miasto</label>
+                        <label className="block text-sm sm:text-base font-medium mb-1">Miasto</label>
                         <InputField name="city" value={formData.city} onChange={handleChange} required />
                     </div>
-                    <div className="col-span-1 md:col-span-2">
-                        <label className="block text-sm font-medium mb-1">Opis</label>
-                        <textarea
-                            name="description"
-                            value={formData.description}
-                            onChange={handleChange}
-                            className="w-full p-2 border border-gray-300 rounded-md resize-none h-24"
-                        />
+                    <div className="sm:col-span-2">
+                        <label className="block text-sm sm:text-base font-medium mb-1">Opis</label>
+                        <textarea name="description" value={formData.description} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded-md resize-none h-24" />
                     </div>
-                    <div className="col-span-1 md:col-span-2">
-                        <h3 className="text-md font-semibold mb-2 mt-6">Godziny otwarcia</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                            {days.map((day) => (
-                                <div key={day} className="flex items-center gap-2">
-                                    <span className="w-24 capitalize">{day}</span>
-                                    <input
-                                        type="time"
-                                        value={formData.opening_hours[day].open}
-                                        onChange={(e) => handleHourChange(day, "open", e.target.value)}
-                                        className="border rounded px-2 py-1 text-sm"
-                                    />
-                                    <span>–</span>
-                                    <input
-                                        type="time"
-                                        value={formData.opening_hours[day].close}
-                                        onChange={(e) => handleHourChange(day, "close", e.target.value)}
-                                        className="border rounded px-2 py-1 text-sm"
-                                    />
+                    <div className="sm:col-span-2">
+                        <h3 className="text-md sm:text-lg font-semibold mb-2">Godziny otwarcia</h3>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            {days.map(day => (
+                                <div key={day} className="flex flex-col sm:flex-row sm:items-center gap-2">
+                                    <span className="w-full sm:w-24 capitalize font-medium">{day}</span>
+                                    <input type="time" value={formData.opening_hours[day].open} onChange={e => handleHourChange(day, "open", e.target.value)} className="border rounded px-2 py-1 text-sm w-full sm:w-auto" />
+                                    <span className="hidden sm:inline">–</span>
+                                    <input type="time" value={formData.opening_hours[day].close} onChange={e => handleHourChange(day, "close", e.target.value)} className="border rounded px-2 py-1 text-sm w-full sm:w-auto" />
                                 </div>
                             ))}
                         </div>
                     </div>
-                    <div className="col-span-1 md:col-span-2 flex justify-center">
-                        <SecondaryButton type="submit">Zapisz zmiany</SecondaryButton>
+                    <div className="sm:col-span-2 flex justify-center">
+                        <SecondaryButton type="submit" className="w-full sm:w-auto">Zapisz zmiany</SecondaryButton>
                     </div>
                 </form>
-            </div>
+            </main>
         </div>
     );
 };

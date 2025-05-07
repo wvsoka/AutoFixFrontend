@@ -11,7 +11,7 @@ import WorkshopPage from "./pages/client/WorkshopPage";
 import { MechanicMyServicesPage } from "./pages/mechanic/MechanicMyServicesPage";
 import {SettingsPage} from "./pages/client/SettingsPage";
 import MyOpinionsPage from "./pages/client/MyOpinionsPage";
-import {MechanicReviewsPage} from "./pages/mechanic/MechanicMyOpinionsPage";
+import {MechanicReviewsPage} from "./pages/mechanic/MechanicMyReviewsPage";
 
 
 
