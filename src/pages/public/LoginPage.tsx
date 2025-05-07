@@ -34,6 +34,7 @@ export const LoginPage = () => {
             localStorage.setItem("accessToken", access);
             localStorage.setItem("refreshToken", refresh);
 
+
             const decoded: { role: string } = jwtDecode(access);
             console.log("Decoded token:", decoded);
 
@@ -42,6 +43,7 @@ export const LoginPage = () => {
             } else {
                 navigate("/services");
             }
+
         } catch (err: any) {
             setError("Nieprawidłowy email lub hasło.");
         }
