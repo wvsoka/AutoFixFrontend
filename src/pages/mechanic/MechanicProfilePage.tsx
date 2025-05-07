@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axiosInstance from "../../api/axiosInstance";
 import { InputField } from "../../components/forms/InputField";
 import { SecondaryButton } from "../../components/buttons/SecondaryButton";
+import { MechanicSidebar } from "../../components/sidebars/MechanicSidebar";
 
 const days = [
     "poniedziałek",
@@ -13,7 +14,7 @@ const days = [
     "niedziela",
 ];
 
-export const MechanicProfilePage = () => {
+export const MechanicProfilePage: React.FC = () => {
     const [formData, setFormData] = useState({
         name: "",
         address: "",
@@ -32,30 +33,28 @@ export const MechanicProfilePage = () => {
     const [error, setError] = useState("");
 
     useEffect(() => {
+        // Pobranie danych mechanika
         axiosInstance.get("/api/mechanic/me/")
             .then((res) => {
                 const data = res.data;
                 setFormData((prev) => ({ ...prev, ...data }));
-                setMechanicInfo({
-                    full_name: data.full_name || "",
-                    email: data.email || "",
-                });
-            });
+                setMechanicInfo({ full_name: data.full_name || "", email: data.email || "" });
+            })
+            .catch(() => setError("Nie udało się załadować danych mechanika."));
 
+        // Pobranie godzin otwarcia
         axiosInstance.get("/api/mechanic/working-hours/")
             .then((res) => {
                 const updatedHours = { ...formData.opening_hours };
-
                 const reverseDayMap: Record<string, string> = {
-                    "monday": "poniedziałek",
-                    "tuesday": "wtorek",
-                    "wednesday": "środa",
-                    "thursday": "czwartek",
-                    "friday": "piątek",
-                    "saturday": "sobota",
-                    "sunday": "niedziela",
+                    monday: "poniedziałek",
+                    tuesday: "wtorek",
+                    wednesday: "środa",
+                    thursday: "czwartek",
+                    friday: "piątek",
+                    saturday: "sobota",
+                    sunday: "niedziela",
                 };
-
                 res.data.forEach((entry: any) => {
                     const plDay = reverseDayMap[entry.day_of_the_week];
                     if (plDay) {
@@ -66,15 +65,10 @@ export const MechanicProfilePage = () => {
                         };
                     }
                 });
-
-                setFormData((prev) => ({
-                    ...prev,
-                    opening_hours: updatedHours,
-                }));
+                setFormData((prev) => ({ ...prev, opening_hours: updatedHours }));
             })
             .catch(() => setError("Nie udało się załadować godzin otwarcia."));
     }, []);
-
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -85,28 +79,25 @@ export const MechanicProfilePage = () => {
             ...prev,
             opening_hours: {
                 ...prev.opening_hours,
-                [day]: {
-                    ...prev.opening_hours[day],
-                    [field]: value,
-                },
+                [day]: { ...prev.opening_hours[day], [field]: value },
             },
         }));
     };
 
     const dayMap: Record<string, string> = {
-        "poniedziałek": "monday",
-        "wtorek": "tuesday",
-        "środa": "wednesday",
-        "czwartek": "thursday",
-        "piątek": "friday",
-        "sobota": "saturday",
-        "niedziela": "sunday",
+        poniedziałek: "monday",
+        wtorek: "tuesday",
+        środa: "wednesday",
+        czwartek: "thursday",
+        piątek: "friday",
+        sobota: "saturday",
+        niedziela: "sunday",
     };
-
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
+            // Aktualizacja danych firmy
             await axiosInstance.patch("/api/mechanic/me/", {
                 name: formData.name,
                 address: formData.address,
@@ -116,36 +107,36 @@ export const MechanicProfilePage = () => {
                 description: formData.description,
             });
 
-            const promises = days.map(async (day) => {
+            // Aktualizacja godzin otwarcia
+            const promises = days.map((day) => {
                 const hour = formData.opening_hours[day];
-                if (!hour.open || !hour.close) return;
-
+                if (!hour.open || !hour.close) {
+                    return Promise.resolve();
+                }
                 const payload = {
                     day_of_the_week: dayMap[day],
-                    open_time: hour.open + ":00",
-                    close_time: hour.close + ":00",
+                    open_time: `${hour.open}:00`,
+                    close_time: `${hour.close}:00`,
                 };
-
-                if (hour.id) {
-                    return axiosInstance.patch(`/api/mechanic/working-hours/${hour.id}/`, payload);
-                } else {
-                    return axiosInstance.post("/api/mechanic/working-hours/", payload);
-                }
+                return hour.id
+                    ? axiosInstance.patch(`/api/mechanic/working-hours/${hour.id}/`, payload)
+                    : axiosInstance.post("/api/mechanic/working-hours/", payload);
             });
-
             await Promise.all(promises);
             setSuccess("Dane zostały zapisane!");
-        } catch (error) {
+        } catch {
             setError("Wystąpił błąd przy zapisie danych.");
         }
     };
 
-
     return (
-        <div className="flex flex-col lg:flex-row min-h-screen bg-[#EEF6FA]">
+        <div className="flex flex-row-reverse min-h-screen bg-[#EEF6FA]">
+            <MechanicSidebar fullName={mechanicInfo.full_name} email={mechanicInfo.email} />
             <div className="flex-1 p-8">
-                <h1 className="text-2xl font-bold text-[#1D3557] mb-6">Witaj, {mechanicInfo.full_name || "Mechaniku"}!</h1>
-                <h2 className="text-xl font-semibold mb-4">Dodaj lub uzupełnij informacje o swojej firmie</h2>
+                <h1 className="text-2xl font-bold text-[#1D3557] mb-6">
+                    Witaj, {mechanicInfo.full_name || "Mechaniku"}!
+                </h1>
+                <h2 className="text-xl font-semibold mb-4">Dane firmy</h2>
 
                 {success && <div className="text-green-600 mb-4">{success}</div>}
                 {error && <div className="text-red-600 mb-4">{error}</div>}
@@ -163,10 +154,6 @@ export const MechanicProfilePage = () => {
                         <label className="block text-sm font-medium mb-1">Ulica i numer</label>
                         <InputField name="address" value={formData.address} onChange={handleChange} required />
                     </div>
-                    {/*<div>*/}
-                    {/*    <label className="block text-sm font-medium mb-1">Kod pocztowy</label>*/}
-                    {/*    <InputField name="zip_code" value={formData.zip_code} onChange={handleChange} required />*/}
-                    {/*</div>*/}
                     <div>
                         <label className="block text-sm font-medium mb-1">Miasto</label>
                         <InputField name="city" value={formData.city} onChange={handleChange} required />
@@ -178,9 +165,8 @@ export const MechanicProfilePage = () => {
                             value={formData.description}
                             onChange={handleChange}
                             className="w-full p-2 border border-gray-300 rounded-md resize-none h-24"
-                        ></textarea>
+                        />
                     </div>
-
                     <div className="col-span-1 md:col-span-2">
                         <h3 className="text-md font-semibold mb-2 mt-6">Godziny otwarcia</h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
@@ -189,14 +175,14 @@ export const MechanicProfilePage = () => {
                                     <span className="w-24 capitalize">{day}</span>
                                     <input
                                         type="time"
-                                        value={formData.opening_hours?.[day]?.open || ""}
+                                        value={formData.opening_hours[day].open}
                                         onChange={(e) => handleHourChange(day, "open", e.target.value)}
                                         className="border rounded px-2 py-1 text-sm"
                                     />
                                     <span>–</span>
                                     <input
                                         type="time"
-                                        value={formData.opening_hours?.[day]?.close || ""}
+                                        value={formData.opening_hours[day].close}
                                         onChange={(e) => handleHourChange(day, "close", e.target.value)}
                                         className="border rounded px-2 py-1 text-sm"
                                     />
@@ -204,28 +190,11 @@ export const MechanicProfilePage = () => {
                             ))}
                         </div>
                     </div>
-
                     <div className="col-span-1 md:col-span-2 flex justify-center">
                         <SecondaryButton type="submit">Zapisz zmiany</SecondaryButton>
                     </div>
                 </form>
             </div>
-
-            <aside className="bg-white border-l p-6 w-full lg:max-w-xs flex flex-col items-center shadow-md">
-                <div className="text-center mb-6">
-                    <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center text-2xl text-gray-600">
-                        <span className="material-icons">person</span>
-                    </div>
-                    <p className="font-semibold mt-2">{mechanicInfo.full_name}</p>
-                    <p className="text-sm text-gray-500">{mechanicInfo.email}</p>
-                </div>
-
-                <nav className="w-full flex flex-col gap-2 text-sm">
-                    <a href="#" className="px-4 py-2 hover:bg-gray-100 rounded text-left">Ustawienia konta</a>
-                    <a href="#" className="px-4 py-2 hover:bg-gray-100 rounded text-left">Moje opinie</a>
-                    <a href="#" className="px-4 py-2 hover:bg-gray-100 rounded text-left text-red-600">Wyloguj się</a>
-                </nav>
-            </aside>
         </div>
     );
 };

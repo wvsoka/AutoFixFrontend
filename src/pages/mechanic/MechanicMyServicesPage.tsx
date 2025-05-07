@@ -1,7 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import axiosInstance from "../../api/axiosInstance";
 import { FiPlus } from "react-icons/fi";
-import { MechanicSidebar } from "../../components/sidebars/MechanicSidebar";
 
 interface Service {
     id: number;
@@ -28,14 +27,9 @@ export const MechanicMyServicesPage = () => {
     });
     const modalRef = useRef<HTMLFormElement>(null);
 
-    const [mechanicInfo, setMechanicInfo] = useState({
-        full_name: "",
-        email: "",
-    });
-
     const fetchServices = async () => {
         try {
-            const res = await axiosInstance.get<Service[]>("/api/mechanic/services/");
+            const res = await axiosInstance.get("/api/mechanic/services/");
             setServices(res.data);
         } catch {
             setError("Nie udało się załadować usług.");
@@ -46,18 +40,6 @@ export const MechanicMyServicesPage = () => {
 
     useEffect(() => {
         fetchServices();
-
-        axiosInstance
-            .get("/api/mechanic/me/")
-            .then((res) => {
-                setMechanicInfo({
-                    full_name: res.data.full_name || "",
-                    email: res.data.email || "",
-                });
-            })
-            .catch(() => {
-                setMechanicInfo({ full_name: "", email: "" });
-            });
     }, []);
 
     useEffect(() => {
@@ -110,21 +92,12 @@ export const MechanicMyServicesPage = () => {
             errors.name = "Nazwa jest wymagana.";
             valid = false;
         }
-        if (
-            !formData.price ||
-            isNaN(Number(formData.price)) ||
-            Number(formData.price) <= 0
-        ) {
+        if (!formData.price || isNaN(Number(formData.price)) || Number(formData.price) <= 0) {
             errors.price = "Cena musi być liczbą większą od zera.";
             valid = false;
         }
         const duration = Number(formData.duration);
-        if (
-            !duration ||
-            isNaN(duration) ||
-            duration <= 0 ||
-            duration % 30 !== 0
-        ) {
+        if (!duration || isNaN(duration) || duration <= 0 || duration % 30 !== 0) {
             errors.duration = "Czas trwania musi być wielokrotnością 30 minut.";
             valid = false;
         }
@@ -140,23 +113,15 @@ export const MechanicMyServicesPage = () => {
         const payload = {
             name: formData.name,
             price: parseFloat(formData.price),
-            duration: `00:${formData.duration.padStart(2, "0")}:00`,
+            duration: `00:${formData.duration.padStart(2, '0')}:00`,
         };
 
         try {
             if (selectedService) {
-                const res = await axiosInstance.put(
-                    `/api/mechanic/services/${selectedService.id}/`,
-                    payload
-                );
-                setServices((prev) =>
-                    prev.map((s) => (s.id === selectedService.id ? res.data : s))
-                );
+                const res = await axiosInstance.put(`/api/mechanic/services/${selectedService.id}/`, payload);
+                setServices((prev) => prev.map((s) => (s.id === selectedService.id ? res.data : s)));
             } else {
-                const res = await axiosInstance.post(
-                    `/api/mechanic/services/`,
-                    payload
-                );
+                const res = await axiosInstance.post(`/api/mechanic/services/`, payload);
                 setServices((prev) => [...prev, res.data]);
             }
             setIsEditing(false);
@@ -165,152 +130,125 @@ export const MechanicMyServicesPage = () => {
         }
     };
 
-    const handleChange = (
-        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-    ) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
     return (
-        <div className="flex flex-row-reverse min-h-screen bg-[#EEF6FA]">
-            <MechanicSidebar
-                fullName={mechanicInfo.full_name}
-                email={mechanicInfo.email}
-            />
-
-            <div className="flex-1 p-8">
-                <div className="flex justify-between items-center mb-6">
-                    <h1 className="text-2xl font-bold text-[#1D3557]">Moje usługi</h1>
-                    <button
-                        onClick={handleAddNew}
-                        className="flex items-center gap-2 bg-[#1D3557] text-white px-4 py-2 rounded shadow hover:bg-[#16324c]"
-                    >
-                        <FiPlus /> Dodaj nową usługę
-                    </button>
-                </div>
-
-                {loading ? (
-                    <p>Ładowanie...</p>
-                ) : error ? (
-                    <p className="text-red-600">{error}</p>
-                ) : (
-                    <div className="space-y-4">
-                        {services.map((service) => (
-                            <div
-                                key={service.id}
-                                className="bg-[#E6F3F8] border border-gray-200 p-4 rounded-md shadow-sm flex justify-between items-center"
-                            >
-                                <div>
-                                    <h3 className="font-semibold text-lg">{service.name}</h3>
-                                    <p>Cena: {service.price} zł</p>
-                                    <p>Czas: {service.duration} min</p>
-                                </div>
-                                <div className="flex gap-2">
-                                    <button
-                                        onClick={() => handleEdit(service)}
-                                        className="bg-teal-100 text-teal-800 px-3 py-1 rounded hover:bg-teal-200"
-                                    >
-                                        Edytuj
-                                    </button>
-                                    <button
-                                        onClick={() => handleDelete(service.id)}
-                                        className="bg-red-100 text-red-800 px-3 py-1 rounded hover:bg-red-200"
-                                    >
-                                        Usuń usługę
-                                    </button>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                )}
-
-                {isEditing && (
-                    <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-                        <form
-                            ref={modalRef}
-                            onSubmit={handleSubmit}
-                            className="bg-white p-6 rounded shadow-md w-full max-w-md"
-                        >
-                            <h2 className="text-xl font-semibold mb-4">
-                                {selectedService ? "Edytuj usługę" : "Dodaj nową usługę"}
-                            </h2>
-                            <div className="space-y-4">
-                                <div>
-                                    <label className="block text-sm font-medium mb-1">
-                                        Nazwa usługi
-                                    </label>
-                                    <input
-                                        type="text"
-                                        name="name"
-                                        value={formData.name}
-                                        onChange={handleChange}
-                                        className="w-full border px-3 py-2 rounded"
-                                    />
-                                    {formErrors.name && (
-                                        <p className="text-red-600 text-sm mt-1">
-                                            {formErrors.name}
-                                        </p>
-                                    )}
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium mb-1">
-                                        Cena (zł)
-                                    </label>
-                                    <input
-                                        type="number"
-                                        name="price"
-                                        value={formData.price}
-                                        onChange={handleChange}
-                                        className="w-full border px-3 py-2 rounded"
-                                    />
-                                    {formErrors.price && (
-                                        <p className="text-red-600 text-sm mt-1">
-                                            {formErrors.price}
-                                        </p>
-                                    )}
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium mb-1">
-                                        Czas trwania (min)
-                                    </label>
-                                    <select
-                                        name="duration"
-                                        value={formData.duration}
-                                        onChange={handleChange}
-                                        className="w-full border px-3 py-2 rounded"
-                                    >
-                                        <option value="">Wybierz czas</option>
-                                        <option value="30">30 minut</option>
-                                        <option value="60">1 godzina</option>
-                                        <option value="90">1,5 godziny</option>
-                                        <option value="120">2 godziny</option>
-                                    </select>
-                                    {formErrors.duration && (
-                                        <p className="text-red-600 text-sm mt-1">
-                                            {formErrors.duration}
-                                        </p>
-                                    )}
-                                </div>
-                            </div>
-                            <div className="mt-6 flex justify-end gap-4">
-                                <button
-                                    type="button"
-                                    onClick={() => setIsEditing(false)}
-                                    className="text-gray-600 hover:text-black"
-                                >
-                                    Anuluj
-                                </button>
-                                <button
-                                    type="submit"
-                                    className="bg-[#1D3557] text-white px-4 py-2 rounded hover:bg-[#16324c]"
-                                >
-                                    Zapisz
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                )}
+        <div className=" min-h-screen">
+            <div className="flex justify-between items-center mb-6">
+                <h1 className="text-2xl font-bold text-[#1D3557]">Moje usługi</h1>
+                <button
+                    onClick={handleAddNew}
+                    className="flex items-center gap-2 bg-[#1D3557] text-white px-4 py-2 rounded shadow hover:bg-[#16324c]"
+                >
+                    <FiPlus /> Dodaj nową usługę
+                </button>
             </div>
+
+            {loading ? (
+                <p>Ładowanie...</p>
+            ) : error ? (
+                <p className="text-red-600">{error}</p>
+            ) : (
+                <div className="space-y-4">
+                    {services.map((service) => (
+                        <div
+                            key={service.id}
+                            className="bg-[#E6F3F8] border border-gray-200 p-4 rounded-md shadow-sm flex justify-between items-center"
+                        >
+                            <div>
+                                <h3 className="font-semibold text-lg">{service.name}</h3>
+                                <p>Cena: {service.price} zł</p>
+                                <p>Czas: {service.duration} min</p>
+                            </div>
+                            <div className="flex gap-2">
+                                <button
+                                    onClick={() => handleEdit(service)}
+                                    className="bg-teal-100 text-teal-800 px-3 py-1 rounded hover:bg-teal-200"
+                                >
+                                    Edytuj
+                                </button>
+                                <button
+                                    onClick={() => handleDelete(service.id)}
+                                    className="bg-red-100 text-red-800 px-3 py-1 rounded hover:bg-red-200"
+                                >
+                                    Usuń usługę
+                                </button>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
+
+            {isEditing && (
+                <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+                    <form
+                        ref={modalRef}
+                        onSubmit={handleSubmit}
+                        className="bg-white p-6 rounded shadow-md w-full max-w-md"
+                    >
+                        <h2 className="text-xl font-semibold mb-4">
+                            {selectedService ? "Edytuj usługę" : "Dodaj nową usługę"}
+                        </h2>
+                        <div className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium mb-1">Nazwa usługi</label>
+                                <input
+                                    type="text"
+                                    name="name"
+                                    value={formData.name}
+                                    onChange={handleChange}
+                                    className="w-full border px-3 py-2 rounded"
+                                />
+                                {formErrors.name && <p className="text-red-600 text-sm mt-1">{formErrors.name}</p>}
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium mb-1">Cena (zł)</label>
+                                <input
+                                    type="number"
+                                    name="price"
+                                    value={formData.price}
+                                    onChange={handleChange}
+                                    className="w-full border px-3 py-2 rounded"
+                                />
+                                {formErrors.price && <p className="text-red-600 text-sm mt-1">{formErrors.price}</p>}
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium mb-1">Czas trwania (min)</label>
+                                <select
+                                    name="duration"
+                                    value={formData.duration}
+                                    onChange={handleChange}
+                                    className="w-full border px-3 py-2 rounded"
+                                >
+                                    <option value="">Wybierz czas</option>
+                                    <option value="30">30 minut</option>
+                                    <option value="60">1 godzina</option>
+                                    <option value="90">1,5 godziny</option>
+                                    <option value="120">2 godziny</option>
+                                </select>
+                                {formErrors.duration && <p className="text-red-600 text-sm mt-1">{formErrors.duration}</p>}
+                            </div>
+                        </div>
+                        <div className="mt-6 flex justify-end gap-4">
+                            <button
+                                type="button"
+                                onClick={() => setIsEditing(false)}
+                                className="text-gray-600 hover:text-black"
+                            >
+                                Anuluj
+                            </button>
+                            <button
+                                type="submit"
+                                className="bg-[#1D3557] text-white px-4 py-2 rounded hover:bg-[#16324c]"
+                            >
+                                Zapisz
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            )}
         </div>
     );
 };

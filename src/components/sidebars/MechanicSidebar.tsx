@@ -21,7 +21,15 @@ export const MechanicSidebar = ({ fullName, email }: MechanicSidebarProps) => {
             <nav className="w-full flex flex-col gap-2 text-sm">
                 <Link
                     to="/mechanic/profile"
-                    className={`px-4 py-2 rounded text-left hover:bg-gray-100 ${location.pathname.includes("/profile") ? "bg-gray-100 font-semibold" : ""}`}
+                    className={`px-4 py-2 rounded text-left hover:bg-gray-100 ${
+                        location.pathname.includes("/profile") ? "bg-gray-100 font-semibold" : ""
+                    }`}
+                >
+                    Dane firmy
+                </Link>
+                <Link
+                    to="/mechanic/profile"
+                    className={`px-4 py-2 rounded text-left hover:bg-gray-100 ${location.pathname.includes("/settings") ? "bg-gray-100 font-semibold" : ""}`}
                 >
                     Ustawienia konta
                 </Link>
