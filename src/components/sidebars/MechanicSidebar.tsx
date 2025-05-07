@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 interface MechanicSidebarProps {
     fullName: string;
@@ -7,6 +7,13 @@ interface MechanicSidebarProps {
 
 export const MechanicSidebar = ({ fullName, email }: MechanicSidebarProps) => {
     const location = useLocation();
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        navigate("/", { replace: true });
+    };
 
     return (
         <aside className="bg-white border-l p-6 w-full lg:max-w-xs flex flex-col items-center shadow-md">
@@ -28,18 +35,25 @@ export const MechanicSidebar = ({ fullName, email }: MechanicSidebarProps) => {
                     Dane firmy
                 </Link>
                 <Link
-                    to="/mechanic/profile"
-                    className={`px-4 py-2 rounded text-left hover:bg-gray-100 ${location.pathname.includes("/settings") ? "bg-gray-100 font-semibold" : ""}`}
+                    to="/mechanic/profile/settings"
+                    className={`px-4 py-2 rounded text-left hover:bg-gray-100 ${
+                        location.pathname.includes("/settings") ? "bg-gray-100 font-semibold" : ""
+                    }`}
                 >
                     Ustawienia konta
                 </Link>
                 <Link
                     to="/mechanic/reviews"
-                    className={`px-4 py-2 rounded text-left hover:bg-gray-100 ${location.pathname.includes("/reviews") ? "bg-gray-100 font-semibold" : ""}`}
+                    className={`px-4 py-2 rounded text-left hover:bg-gray-100 ${
+                        location.pathname.includes("/reviews") ? "bg-gray-100 font-semibold" : ""
+                    }`}
                 >
                     Moje opinie
                 </Link>
-                <button className="px-4 py-2 text-left text-red-600 hover:bg-gray-100 rounded mt-2">
+                <button
+                    onClick={handleLogout}
+                    className="px-4 py-2 text-left text-red-600 hover:bg-gray-100 rounded mt-2"
+                >
                     Wyloguj się
                 </button>
             </nav>

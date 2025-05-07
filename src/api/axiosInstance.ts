@@ -33,7 +33,6 @@ axiosInstance.interceptors.request.use(
                     }
                 }
             } catch {
-                // jeśli coś nie zadziała przy dekodowaniu lub fetchu → prześlij request z oryginalnym access
             }
             config.headers.Authorization = `Bearer ${accessToken}`;
         }
