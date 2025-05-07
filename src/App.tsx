@@ -11,6 +11,7 @@ import WorkshopPage from "./pages/client/WorkshopPage";
 import { MechanicMyServicesPage } from "./pages/mechanic/MechanicMyServicesPage";
 import {SettingsPage} from "./pages/client/SettingsPage";
 import MyOpinionsPage from "./pages/client/MyOpinionsPage";
+import {MechanicReviewsPage} from "./pages/mechanic/MechanicMyOpinionsPage";
 
 
 
@@ -27,6 +28,7 @@ function App() {
                 <Route element={<MechanicPrivateLayout />}>
                     <Route path="/mechanic/profile" element={<MechanicProfilePage />} />
                     <Route path="/mechanic/myservices" element={<MechanicMyServicesPage />} />
+                    <Route path="/mechanic/reviews" element={<MechanicReviewsPage />}/>
                 </Route>
                 <Route path="/services" element={<ListOfMechanics />} />
                 <Route path="/workshop" element={<WorkshopPage />} />
