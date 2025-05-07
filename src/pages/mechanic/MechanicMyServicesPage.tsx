@@ -28,7 +28,6 @@ export const MechanicMyServicesPage = () => {
     });
     const modalRef = useRef<HTMLFormElement>(null);
 
-    // stan mechanika (żeby podać do sidebar)
     const [mechanicInfo, setMechanicInfo] = useState({
         full_name: "",
         email: "",
@@ -46,10 +45,8 @@ export const MechanicMyServicesPage = () => {
     };
 
     useEffect(() => {
-        // pobierz listę usług
         fetchServices();
 
-        // pobierz dane mechanika do sidebar
         axiosInstance
             .get("/api/mechanic/me/")
             .then((res) => {
