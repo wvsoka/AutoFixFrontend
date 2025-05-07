@@ -34,18 +34,16 @@ export const LoginPage = () => {
             localStorage.setItem("accessToken", access);
             localStorage.setItem("refreshToken", refresh);
 
+
             const decoded: { role: string } = jwtDecode(access);
             console.log("Decoded token:", decoded);
 
-            //navigate("/mechanic/profile");
+            if (decoded.role === "mechanic") {
+                navigate("/mechanic/profile");
+            } else {
+                navigate("/services");
+            }
 
-
-            //     try {
-        //         await axiosInstance.get("/api/mechanic/me/");
-        //         navigate("/mechanic/profile");
-        //     } catch {
-        //         navigate("/");
-        //     }
         } catch (err: any) {
             setError("Nieprawidłowy email lub hasło.");
         }
