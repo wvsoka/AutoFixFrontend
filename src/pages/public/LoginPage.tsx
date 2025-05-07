@@ -37,15 +37,11 @@ export const LoginPage = () => {
             const decoded: { role: string } = jwtDecode(access);
             console.log("Decoded token:", decoded);
 
-            //navigate("/mechanic/profile");
-
-
-            //     try {
-        //         await axiosInstance.get("/api/mechanic/me/");
-        //         navigate("/mechanic/profile");
-        //     } catch {
-        //         navigate("/");
-        //     }
+            if (decoded.role === "mechanic") {
+                navigate("/mechanic/profile");
+            } else {
+                navigate("/services");
+            }
         } catch (err: any) {
             setError("Nieprawidłowy email lub hasło.");
         }
