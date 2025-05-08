@@ -56,7 +56,7 @@ export const LoginPage = () => {
 
                 <div className="bg-white rounded-2xl shadow-lg p-8 w-full md:w-1/2 flex flex-col justify-center">
                     <div className="flex justify-center mb-4">
-                        <img src="/logo.png" alt="AutoFix Logo" className="h-12" />
+                        <img src="/car.png" alt="AutoFix Logo" className="h-16" />
                     </div>
 
                     {error && (

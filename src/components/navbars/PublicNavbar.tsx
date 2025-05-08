@@ -32,9 +32,8 @@ export const PublicNavbar = () => {
     return (
         <nav className="bg-[#3D7CA9] text-white px-6 py-4 shadow-md">
             <div className="flex justify-between items-center">
-                <Link to="/" className="text-2xl font-bold">
-                    <span className="text-white">AUTO</span>
-                    <span className="text-gray-300">FIX</span>
+                <Link to="/" className="flex items-center">
+                    <img src="/logo.png" alt="Logo" className="h-10 w-auto" />
                 </Link>
 
                 <div className="md:hidden">
