@@ -6,11 +6,11 @@ import axiosInstance from "../../api/axiosInstance";
 import { pl } from "date-fns/locale";
 
 interface CalendarExtendedEvent extends CalendarEvent {
-  id: string;  // Upewniamy się, że id istnieje
+  id: string;
   type: "working" | "appointment";
   originalId?: number;
   status?: string;
-  title: string;  // Dodajemy title jako string, aby uniknąć problemów
+  title: string;
 }
 
 const locales = { pl };
@@ -48,6 +48,9 @@ export const MechanicCalendar = () => {
           axiosInstance.get("/api/mechanic/appointments/"),
           axiosInstance.get("/api/mechanic/working-hours/"),
         ]);
+
+		console.log("Appointments:", appointmentsRes.data);
+      	console.log("Working Hours:", workingHoursRes.data);
 
         const appointmentEvents = appointmentsRes.data.map((a: Appointment) => {
           const start = new Date(a.datetime);

@@ -14,8 +14,6 @@ export const MechanicPrivateLayout = () => {
     const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null);
 
     useEffect(() => {
-        setIsAuthorized(true);
-        /*
         const token = localStorage.getItem("accessToken");
         if (!token) {
             setIsAuthorized(false);
@@ -33,7 +31,7 @@ export const MechanicPrivateLayout = () => {
             }
         } catch {
             setIsAuthorized(false);
-        } */
+        }
     }, [navigate]);
 
     if (isAuthorized === null) return null;
