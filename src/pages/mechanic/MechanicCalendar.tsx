@@ -25,7 +25,7 @@ const localizer = dateFnsLocalizer({
 interface Appointment {
   id: number;
   customer_name: string;
-  datetime: string;
+  date: string;
   duration_minutes: number;
   status: string;
 }
@@ -39,7 +39,7 @@ interface WorkingHour {
 
 export const MechanicCalendar = () => {
   const [events, setEvents] = useState<CalendarExtendedEvent[]>([]);
-  const [view, setView] = useState<View>(Views.WEEK); // Ustawiamy View na odpowiedni typ
+  const [view, setView] = useState<View>(Views.WEEK);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -49,21 +49,29 @@ export const MechanicCalendar = () => {
           axiosInstance.get("/api/mechanic/working-hours/"),
         ]);
 
-		console.log("Appointments:", appointmentsRes.data);
-      	console.log("Working Hours:", workingHoursRes.data);
+        console.log("Appointments:", appointmentsRes.data);
+        console.log("Working Hours:", workingHoursRes.data);
 
         const appointmentEvents = appointmentsRes.data.map((a: Appointment) => {
-          const start = new Date(a.datetime);
-          const end = new Date(start.getTime() + a.duration_minutes * 60000);
+          //const start = new Date(a.datetime);
+          //const end = new Date(start.getTime() + a.duration_minutes * 60000);
+		  console.log("Start:", a.date);
+
+			const start = new Date(2025, 4, 10, 10, 0, 0);
+			console.log("Manually created start date:", start);
+
+			const end = new Date(2025, 4, 10, 11, 30, 0);
+			console.log("Manually created end date:", end);
+
           return {
-            id: `appointment-${a.id}`,  // Dodajemy 'id' typu string
+            id: `appointment-${a.id}`,
             title: `${a.customer_name} (${a.status})`,
             start,
             end,
-            type: "appointment", // Dodajemy 'type'
+            type: "appointment",
             originalId: a.id,
             status: a.status,
-          } as CalendarExtendedEvent; // Rzutowanie na CalendarExtendedEvent
+          } as CalendarExtendedEvent;
         });
 
         const today = new Date();
@@ -78,6 +86,7 @@ export const MechanicCalendar = () => {
           SUNDAY: 6,
         };
 
+        // Mapowanie wydarzeń związanych z godzinami pracy
         const workingEvents = workingHoursRes.data.map((wh: WorkingHour) => {
           const dayOffset = daysMap[wh.day];
           const baseDate = new Date(weekStart);
@@ -93,13 +102,13 @@ export const MechanicCalendar = () => {
           end.setHours(eh, em, 0);
 
           return {
-            id: `working-${wh.id}`,  // Dodajemy 'id' typu string
+            id: `working-${wh.id}`,
             title: "Dostępność",
             start,
             end,
             allDay: false,
-            type: "working", // Dodajemy 'type'
-          } as CalendarExtendedEvent; // Rzutowanie na CalendarExtendedEvent
+            type: "working",
+          } as CalendarExtendedEvent;
         });
 
         setEvents([...workingEvents, ...appointmentEvents]);
@@ -121,7 +130,7 @@ export const MechanicCalendar = () => {
           });
           setEvents((prev) =>
             prev.map((e) =>
-              e.id === event.id // Teraz 'id' jest dostępne
+              e.id === event.id
                 ? { ...e, title: e.title.replace(/\(.*?\)/, "(CONFIRMED)"), status: "CONFIRMED" }
                 : e
             )
@@ -131,6 +140,19 @@ export const MechanicCalendar = () => {
         }
       }
     }
+  };
+
+  const getEventColor = (event: CalendarExtendedEvent) => {
+	switch (event.status) {
+	  case "confirmed":
+		return { style: { backgroundColor: "#60a5fa" } }; // Niebieski
+	  case "pending":
+		return { style: { backgroundColor: "#facc15" } }; // Żółty
+	  case "canceled":
+		return { style: { backgroundColor: "#e11d48" } }; // Czerwony??idk czy to
+	  default:
+		return { style: { backgroundColor: "#cbd5e1" } }; // Szary (domyślnie)
+	}
   };
 
   return (
@@ -166,17 +188,10 @@ export const MechanicCalendar = () => {
         endAccessor="end"
         style={{ height: 600 }}
         onSelectEvent={handleSelectEvent}
-        eventPropGetter={(event: CalendarExtendedEvent) => {
-          const bg = event.type === "appointment"
-            ? event.status === "CONFIRMED"
-              ? "#60a5fa"
-              : "#facc15"
-            : "#cbd5e1";
-          return { style: { backgroundColor: bg } };
-        }}
-        views={['month', 'week', 'day']} // Możesz dodać inne widoki, takie jak "agenda", jeśli chcesz
-        view={view} // Ustawiamy widok na podstawie stanu
-        onView={(newView) => setView(newView)} // Przełączanie widoków
+        eventPropGetter={(event: CalendarExtendedEvent) => getEventColor(event)}  // Używamy funkcji getEventColor
+        views={['month', 'week', 'day']}
+        view={view}
+        onView={(newView) => setView(newView)}
       />
     </div>
   );
