@@ -150,9 +150,9 @@ export const MechanicProfilePage: React.FC = () => {
                             {days.map(day => (
                                 <div key={day} className="flex flex-col sm:flex-row sm:items-center gap-2">
                                     <span className="w-full sm:w-24 capitalize font-medium">{day}</span>
-                                    <input type="time" value={formData.opening_hours[day]?.open || "08:00"} onChange={e => handleHourChange(day, "open", e.target.value)} className="border rounded px-2 py-1 text-sm w-full sm:w-auto" />
+                                    <input type="time" value={formData.opening_hours[day]?.open || "00:00"} onChange={e => handleHourChange(day, "open", e.target.value)} className="border rounded px-2 py-1 text-sm w-full sm:w-auto" />
                                     <span className="hidden sm:inline">–</span>
-                                    <input type="time" value={formData.opening_hours[day]?.close || "16:00"} onChange={e => handleHourChange(day, "close", e.target.value)} className="border rounded px-2 py-1 text-sm w-full sm:w-auto" />
+                                    <input type="time" value={formData.opening_hours[day]?.close || "00:00"} onChange={e => handleHourChange(day, "close", e.target.value)} className="border rounded px-2 py-1 text-sm w-full sm:w-auto" />
                                 </div>
                             ))}
                         </div>
