@@ -57,13 +57,6 @@ const demoWorkingEvents: CalendarExtendedEvent[] = [
 		start: new Date("2025-05-13T08:00:00"),
 		end: new Date("2025-05-13T16:00:00"),
 	},
-	{
-		id: "demo-working-3",
-		type: "working",
-		title: "Dostępność",
-		start: new Date("2025-05-15T08:00:00"),
-		end: new Date("2025-05-15T17:00:00"),
-	},
 ];
 
 
@@ -163,7 +156,29 @@ export const MechanicCalendar = () => {
 
 				const end = new Date(baseDate);
 				end.setHours(eh, em, 0);
+				
+				// Create a new event for this working day and make it repeat every week
+				const recurringEvents = [];
+				for (let i = 0; i < 8; i++) {
+					const recurringStart = new Date(start);
+					const recurringEnd = new Date(end);
 
+					// Shift the start and end times by each week
+					recurringStart.setDate(recurringStart.getDate() + i * 7);
+					recurringEnd.setDate(recurringEnd.getDate() + i * 7);
+
+					recurringEvents.push({
+						id: `working-${wh.day_of_the_week}-week-${i}`,
+						title: "Dostępność",
+						start: recurringStart,
+						end: recurringEnd,
+						allDay: false,
+						type: "working",
+					} as CalendarExtendedEvent);
+				}
+			
+				return recurringEvents;
+				/*
 				return {
 				  	id: `working-${wh.day_of_the_week}`,
 				  	title: "Dostępność",
@@ -172,7 +187,8 @@ export const MechanicCalendar = () => {
 				  	allDay: false,
 				  	type: "working",
 				} as CalendarExtendedEvent;
-			});
+				*/
+			}).flat();
 
         	setEvents([...appointmentEvents, ...demoEvents]);
 			setBackgroundEvents([...workingEvents, ...demoWorkingEvents]);
