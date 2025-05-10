@@ -14,6 +14,59 @@ interface CalendarExtendedEvent extends CalendarEvent {
   	title: string;
 }
 
+/* Some demo events to show calendar's functionality. */
+const demoEvents: CalendarExtendedEvent[] = [
+	{
+	  	id: "demo-1",
+	  	type: "appointment",
+	  	title: "Wymiana klocków hamulcowych",
+		start: new Date("2025-05-14T10:00:00"),
+		end: new Date("2025-05-14T11:30:00"),
+	  	status: "confirmed",
+	},
+	{
+	  	id: "demo-2",
+		type: "appointment",
+	  	title: "Serwis klimatyzacji",
+		start: new Date("2025-05-13T13:30:00"),
+		end: new Date("2025-05-13T14:30:00"),
+	  	status: "pending",
+	},
+	{
+		id: "demo-3",
+	  	type: "appointment",
+		title: "Wymiana oleju",
+	  	start: new Date("2025-05-15T13:00:00"),
+	  	end: new Date("2025-05-15T13:30:00"),
+		status: "confirmed",
+  },
+];
+
+const demoWorkingEvents: CalendarExtendedEvent[] = [
+	{
+		id: "demo-working-1",
+		type: "working",
+		title: "Dostępność",
+		start: new Date("2025-05-14T09:00:00"),
+		end: new Date("2025-05-14T16:00:00"),
+	},
+	{
+		id: "demo-working-2",
+		type: "working",
+		title: "Dostępność",
+		start: new Date("2025-05-13T08:00:00"),
+		end: new Date("2025-05-13T16:00:00"),
+	},
+	{
+		id: "demo-working-3",
+		type: "working",
+		title: "Dostępność",
+		start: new Date("2025-05-15T08:00:00"),
+		end: new Date("2025-05-15T17:00:00"),
+	},
+];
+
+
 const locales = { pl };
 const localizer = dateFnsLocalizer({
   	format,
@@ -36,20 +89,21 @@ interface Service {
 	mechanic: number;
 	name: string;
 	price: string;
-	duration: string;  // w formacie "HH:MM:SS"
+	duration: string;  //"HH:MM:SS"
 }
 
 interface WorkingHour {
-  	d: number;
-  	day: string;
-  	start_time: string;
-  	end_time: string;
+	id: number,
+  	day_of_the_week: string;
+  	open_time: string;
+  	close_time: string;
 }
 
 export const MechanicCalendar = () => {
   	const [events, setEvents] = useState<CalendarExtendedEvent[]>([]);
   	const [view, setView] = useState<View>(Views.WEEK);
 	const [currentDate, setCurrentDate] = useState(new Date());
+	const [backgroundEvents, setBackgroundEvents] = useState<CalendarExtendedEvent[]>([]);
 
   	useEffect(() => {
     	const fetchData = async () => {
@@ -64,6 +118,7 @@ export const MechanicCalendar = () => {
         	console.log("Working Hours:", workingHoursRes.data);
 			console.log("Services:", servicesList.data);
 
+			//  Mapping appointments.
         	const appointmentEvents = appointmentsRes.data.map((a: Appointment) => {
 				const service: Service = servicesList.data.find((s: Service) => s.id === a.service);
 				const [hours, minutes, seconds] = service.duration.split(":").map(Number);
@@ -85,41 +140,43 @@ export const MechanicCalendar = () => {
         	const today = new Date();
         	const weekStart = startOfWeek(today, { weekStartsOn: 1 });
         	const daysMap: Record<string, number> = {
-          		MONDAY: 0,
-         		TUESDAY: 1,
-          		WEDNESDAY: 2,
-          		THURSDAY: 3,
-          		FRIDAY: 4,
-          		SATURDAY: 5,
-          		SUNDAY: 6,
-        	};
+				monday: 0,
+				tuesday: 1,
+				wednesday: 2,
+				thursday: 3,
+				friday: 4,
+				saturday: 5,
+				sunday: 6,
+			};
 
-        	// Mapowanie wydarzeń związanych z godzinami pracy
+			// Mapping working hours.
         	const workingEvents = workingHoursRes.data.map((wh: WorkingHour) => {
-          		const dayOffset = daysMap[wh.day];
-          		const baseDate = new Date(weekStart);
-          		baseDate.setDate(baseDate.getDate() + dayOffset);
+				const dayOffset = daysMap[wh.day_of_the_week.toLowerCase()];
+				const baseDate = new Date(weekStart);
+				baseDate.setDate(baseDate.getDate() + dayOffset);
 
-          		const [sh, sm] = wh.start_time.split(":").map(Number);
-          		const [eh, em] = wh.end_time.split(":").map(Number);
+				const [sh, sm] = wh.open_time.split(":").map(Number);
+				const [eh, em] = wh.close_time.split(":").map(Number);
 
-          		const start = new Date(baseDate);
-          		start.setHours(sh, sm, 0);
+				const start = new Date(baseDate);
+				start.setHours(sh, sm, 0);
 
-          		const end = new Date(baseDate);
-          		end.setHours(eh, em, 0);
+				const end = new Date(baseDate);
+				end.setHours(eh, em, 0);
 
-          		return {
-            		id: `working`,
-            		title: "Dostępność",
-            		start,
-            		end,
-            		allDay: false,
-            		type: "working",
-          		} as CalendarExtendedEvent;
-        	});
+				return {
+				  	id: `working-${wh.day_of_the_week}`,
+				  	title: "Dostępność",
+				  	start,
+				  	end,
+				  	allDay: false,
+				  	type: "working",
+				} as CalendarExtendedEvent;
+			});
 
-        	setEvents([...workingEvents, ...appointmentEvents]);
+        	setEvents([...appointmentEvents, ...demoEvents]);
+			setBackgroundEvents([...workingEvents, ...demoWorkingEvents]);
+
       	} catch (err) {
         	console.error("Błąd ładowania kalendarza:", err);
       	}
@@ -128,17 +185,17 @@ export const MechanicCalendar = () => {
   	}, []);
 
   	const handleSelectEvent = async (event: CalendarExtendedEvent) => {
-    	if (event.type === "appointment" && event.status !== "CONFIRMED") {
+    	if (event.type === "appointment" && event.status !== "confirmed") {
     	  	const confirm = window.confirm(`Potwierdzić wizytę "${event.title}"?`);
     	  	if (confirm) {
     	    	try {
     	      		await axiosInstance.patch(`/api/mechanic/appointments/${event.originalId}/update-status/`, {
-    	        	status: "CONFIRMED",
+    	        	status: "confirmed",
     	      	});
     	      	setEvents((prev) =>
     	        	prev.map((e) =>
     	          		e.id === event.id
-    	            	? { ...e, title: e.title.replace(/\(.*?\)/, "(CONFIRMED)"), status: "CONFIRMED" }
+    	            	? { ...e, status: "confirmed" }
     	            	: e
     	        	)
     	      	);
@@ -150,34 +207,43 @@ export const MechanicCalendar = () => {
   	};
 
 	const getEventColor = (event: CalendarExtendedEvent) => {
+		if (event.type === "working") {
+			return { style: { backgroundColor: "#d4dbe3" } };
+		}
+
 		switch (event.status) {
 	  		case "confirmed":
-				return { style: { backgroundColor: "#60a5fa" } }; // Niebieski
+				return { style: { backgroundColor: "#60a5fa" } };  // blue
 	  		case "pending":
-				return { style: { backgroundColor: "#facc15" } }; // Żółty
+				return { style: { backgroundColor: "#facc15" } };  // yellow
 	  		default:
-				return { style: { backgroundColor: "#cbd5e1" } };
+				return { style: { backgroundColor: "#d4dbe3" } };
 		}
   	};
 
-  return (
-    <div className="p-4">
-      <h2 className="text-2xl font-semibold mb-4">Kalendarz mechanika</h2>
+  	return (
+    	<div className="p-4">
+      		<h2 className="text-2xl font-semibold mb-4">Kalendarz mechanika</h2>
 
-      <Calendar
-        localizer={localizer}
-        events={events}
-        startAccessor="start"
-        endAccessor="end"
-        style={{ height: 600 }}
-        onSelectEvent={handleSelectEvent}
-        eventPropGetter={(event: CalendarExtendedEvent) => getEventColor(event)}
-        views={['month', 'week', 'day']}
-        view={view}
-        onView={(newView) => setView(newView)}
-        date={currentDate}
-        onNavigate={(newDate) => setCurrentDate(newDate)}
-      />
-    </div>
-  );
+      		<Calendar
+        		localizer={localizer}
+				events={events}
+  				backgroundEvents={backgroundEvents}
+        		startAccessor="start"
+        		endAccessor="end"
+				step={30}
+				timeslots={2}
+        		style={{ height: 1000 }}
+				min={new Date(1970, 1, 1, 6, 0)}
+  				max={new Date(1970, 1, 1, 21, 0)}
+        		onSelectEvent={handleSelectEvent}
+        		eventPropGetter={(event: CalendarExtendedEvent) => getEventColor(event)}
+        		views={['month', 'week', 'day']}
+        		view={view}
+        		onView={(newView) => setView(newView)}
+        		date={currentDate}
+        		onNavigate={(newDate) => setCurrentDate(newDate)}
+      		/>
+    	</div>
+  	);
 };
