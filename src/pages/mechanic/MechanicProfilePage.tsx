@@ -27,10 +27,12 @@ export const MechanicProfilePage: React.FC = () => {
         axiosInstance.get("/api/mechanic/me/")
             .then(res => {
                 const data = res.data;
+
                 setFormData(prev => ({ ...prev, ...data }));
                 setMechanicInfo({ full_name: data.full_name || "", email: data.email || "" });
             })
             .catch(() => setError("Nie udało się załadować danych mechanika."));
+
         axiosInstance.get("/api/mechanic/working-hours/")
             .then(res => {
                 const updatedHours = { ...formData.opening_hours };

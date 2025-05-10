@@ -178,16 +178,6 @@ export const MechanicCalendar = () => {
 				}
 			
 				return recurringEvents;
-				/*
-				return {
-				  	id: `working-${wh.day_of_the_week}`,
-				  	title: "Dostępność",
-				  	start,
-				  	end,
-				  	allDay: false,
-				  	type: "working",
-				} as CalendarExtendedEvent;
-				*/
 			}).flat();
 
         	setEvents([...appointmentEvents, ...demoEvents]);
