@@ -9,10 +9,10 @@ import {MechanicPrivateLayout} from "./layouts/MechanicPrivateLayout";
 import ListOfMechanics from "./pages/client/ListOfMechanics";
 import WorkshopPage from "./pages/client/WorkshopPage";
 import { MechanicMyServicesPage } from "./pages/mechanic/MechanicMyServicesPage";
-import {SettingsPage} from "./pages/client/SettingsPage";
+import { SettingsPage } from "./pages/client/SettingsPage";
 import MyOpinionsPage from "./pages/client/MyOpinionsPage";
-import {MechanicReviewsPage} from "./pages/mechanic/MechanicMyReviewsPage";
-
+import { MechanicReviewsPage } from "./pages/mechanic/MechanicMyReviewsPage";
+import { MechanicCalendar } from "./pages/mechanic/MechanicCalendar";
 
 
 function App() {
@@ -29,6 +29,7 @@ function App() {
                     <Route path="/mechanic/profile" element={<MechanicProfilePage />} />
                     <Route path="/mechanic/myservices" element={<MechanicMyServicesPage />} />
                     <Route path="/mechanic/reviews" element={<MechanicReviewsPage />}/>
+                    <Route path="/mechanic/calendar" element={<MechanicCalendar />} />
                 </Route>
                 <Route path="/services" element={<ListOfMechanics />} />
                 <Route path="/workshop" element={<WorkshopPage />} />
