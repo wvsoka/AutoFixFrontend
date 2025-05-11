@@ -209,7 +209,12 @@ export const MechanicCalendar = () => {
     	      		alert("Błąd podczas aktualizacji statusu.");
     	    	}
     	  	}
-    	}
+    	} else if (event.type === "appointment") {
+			alert(`Szczegóły wizyty:
+				${event.title}
+				Termin: ${event.start?.toLocaleString()}
+				`);
+		}
   	};
 
 	const getEventColor = (event: CalendarExtendedEvent) => {

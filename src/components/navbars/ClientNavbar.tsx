@@ -31,7 +31,7 @@ const ClientNavbar = () => {
                                 Ustawienia
                             </Link>
                             <Link
-                                to="/client/my-visits"
+                                to="/client/my-appointments"
                                 className="block px-4 py-2 hover:bg-gray-100"
                                 onClick={() => setDropdownOpen(false)}
                             >

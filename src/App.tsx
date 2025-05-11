@@ -13,7 +13,7 @@ import { SettingsPage } from "./pages/client/SettingsPage";
 import MyOpinionsPage from "./pages/client/MyOpinionsPage";
 import { MechanicReviewsPage } from "./pages/mechanic/MechanicMyReviewsPage";
 import { MechanicCalendar } from "./pages/mechanic/MechanicCalendar";
-
+import AppointmentsPage from "./pages/client/AppointmentsPage";
 
 function App() {
     return (
@@ -35,6 +35,7 @@ function App() {
                 <Route path="/workshop" element={<WorkshopPage />} />
                 <Route path="/client/settings" element={<SettingsPage />} />
                 <Route path="/client/my-opinions" element={<MyOpinionsPage />}/>
+                <Route path="/client/my-appointments" element={<AppointmentsPage />} />
             </Routes>
         </BrowserRouter>
     );
