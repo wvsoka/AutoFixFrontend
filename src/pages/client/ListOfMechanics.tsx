@@ -3,8 +3,12 @@ import './ListOfMechanics.css';
 import ClientNavbar from "../../components/navbars/ClientNavbar";
 import ArrowRightButton from "../../components/buttons/ArrowRightButton";
 import SearchIcon from '@mui/icons-material/Search';
+import { useNavigate } from "react-router-dom";
+
 
 const ListOfMechanics: React.FC = () => {
+    const navigate = useNavigate();
+
     return (
         <div className="client-mech-list">
             <ClientNavbar />
@@ -39,8 +43,8 @@ const ListOfMechanics: React.FC = () => {
                         </div>
                         <div className="mechanic-rating">
                             {'★★★★★'}
-                            {/* Dodanie przycisku ArrowRightButton */}
-                            <ArrowRightButton />
+                            <ArrowRightButton onClick={() => navigate('/workshop')} />
+
                         </div>
                     </div>
                 ))}
