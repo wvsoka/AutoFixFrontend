@@ -82,7 +82,7 @@ const MyOpinionsPage = () => {
         <div>
             <ClientNavbar/>
             <section className="pending-reviews">
-                <h2 className="pending-title">Oczekujące opinie</h2>
+                <h1 className="pending-title">Oczekujące opinie</h1>
                 {pendingReviews.length > 0 ? (
                     <div className="pending-cards">
                         {pendingReviews.map((workshop) => (
