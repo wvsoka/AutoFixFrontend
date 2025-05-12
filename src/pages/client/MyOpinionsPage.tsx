@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import ClientNavbar from "../../components/navbars/ClientNavbar";
 import OpinionCard from "../../components/tiles/OpinionCard";
 import "./MyOpinionsPage.css";
+import { useNavigate } from "react-router-dom";
 
 type Opinion = {
     rating: number;
@@ -48,9 +49,19 @@ const mockOpinions: Opinion[] = [
     },
 ];
 
+const pendingReviews = [
+    { id: 1, name: "Lux Auto", address: "Mickiewicza 12, Szczecin" },
+    { id: 2, name: "AutoFix", address: "Piłsudskiego 45, Warszawa" },
+    { id: 1, name: "Lux Auto", address: "Mickiewicza 12, Szczecin" },
+    { id: 2, name: "AutoFix", address: "Piłsudskiego 45, Warszawa" },
+    { id: 1, name: "Lux Auto", address: "Mickiewicza 12, Szczecin" },
+    { id: 2, name: "AutoFix", address: "Piłsudskiego 45, Warszawa" },
+
+];
 
 const MyOpinionsPage = () => {
     const [sortOption, setSortOption] = useState("newest");
+    const navigate = useNavigate();
 
     const sortedOpinions = [...mockOpinions].sort((a, b) => {
         switch (sortOption) {
@@ -70,6 +81,29 @@ const MyOpinionsPage = () => {
     return (
         <div>
             <ClientNavbar/>
+            <section className="pending-reviews">
+                <h2 className="pending-title">Oczekujące opinie</h2>
+                {pendingReviews.length > 0 ? (
+                    <div className="pending-cards">
+                        {pendingReviews.map((workshop) => (
+                            <div className="pending-card" key={workshop.id}>
+                                <div className="pending-info">
+                                    <p className="workshop-name">{workshop.name}</p>
+                                    <p className="workshop-address">{workshop.address}</p>
+                                </div>
+                                <button
+                                    className="review-button"
+                                    onClick={() => navigate(`/review/${workshop.id}`)}
+                                >
+                                    Wystaw opinię
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    <p className="no-pending">Na razie cicho... Brak oczekujących opinii.</p>
+                )}
+            </section>
             <div className="my-opinions-container">
                 <h1 className="my-opinions-title">Moje opinie</h1>
 
@@ -87,12 +121,18 @@ const MyOpinionsPage = () => {
                 </div>
 
                 <div className="opinions-list">
-                    {sortedOpinions.map((opinion, idx) => (
-                        <div key={idx}>
-                            <h3 className="shop-name-label">{opinion.shopName}</h3>
-                            <OpinionCard {...opinion} />
-                        </div>
-                    ))}
+                    {sortedOpinions.length > 0 ? (
+                        sortedOpinions.map((opinion, idx) => (
+                            <div key={idx}>
+                                <h3 className="shop-name-label">{opinion.shopName}</h3>
+                                <OpinionCard {...opinion} />
+                            </div>
+                        ))
+                    ) : (
+                        <p className="no-opinions-message">
+                            Nie dodałeś jeszcze żadnych opinii.
+                        </p>
+                    )}
                 </div>
             </div>
         </div>
