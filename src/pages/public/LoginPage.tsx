@@ -40,8 +40,10 @@ export const LoginPage = () => {
 
             if (decoded.role === "mechanic") {
                 navigate("/mechanic/profile");
-            } else {
+            } else if (decoded.role === "client") {
                 navigate("/services");
+            } else {
+                console.warn("Nieznana rola:", decoded.role);
             }
 
         } catch (err: any) {
