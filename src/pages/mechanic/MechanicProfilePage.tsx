@@ -3,6 +3,7 @@ import axiosInstance from "../../api/axiosInstance";
 import { InputField } from "../../components/forms/InputField";
 import { SecondaryButton } from "../../components/buttons/SecondaryButton";
 import { MechanicSidebar } from "../../components/sidebars/MechanicSidebar";
+import { FiMapPin, FiPhone, FiClock, FiHome, FiInfo } from "react-icons/fi";
 
 const days = ["poniedziałek", "wtorek", "środa", "czwartek", "piątek", "sobota", "niedziela"];
 
@@ -27,7 +28,6 @@ export const MechanicProfilePage: React.FC = () => {
         axiosInstance.get("/api/mechanic/me/")
             .then(res => {
                 const data = res.data;
-
                 setFormData(prev => ({ ...prev, ...data }));
                 setMechanicInfo({ full_name: data.full_name || "", email: data.email || "" });
             })
@@ -116,43 +116,60 @@ export const MechanicProfilePage: React.FC = () => {
     };
 
     return (
-        <div className="flex flex-col-reverse lg:flex-row-reverse min-h-screen bg-[#EEF6FA]">
+        <div className="flex flex-col-reverse lg:flex-row-reverse min-h-screen bg-white">
             <MechanicSidebar fullName={mechanicInfo.full_name} email={mechanicInfo.email} />
-            <main className="flex-1 p-4 sm:p-8">
-                <h1 className="text-2xl sm:text-3xl font-bold text-[#1D3557] mb-4">Witaj, {mechanicInfo.full_name || "Mechaniku"}!</h1>
-                <h2 className="text-xl sm:text-2xl font-semibold mb-4">Dane firmy</h2>
-                {success && <div className="text-green-600 mb-4">{success}</div>}
-                {error && <div className="text-red-600 mb-4">{error}</div>}
-                <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <main className="flex-1 px-6 py-10">
+                <h1 className="text-3xl font-bold text-zinc-800 mb-6">Witaj, {mechanicInfo.full_name || "Mechaniku"}!</h1>
+                <h2 className="text-2xl font-semibold text-zinc-700 mb-4">Dane warsztatu</h2>
+                {success && <div className="text-green-600 mb-4 font-medium">{success}</div>}
+                {error && <div className="text-red-600 mb-4 font-medium">{error}</div>}
+
+                <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div>
-                        <label className="block text-sm sm:text-base font-medium mb-1">Nazwa zakładu</label>
-                        <InputField name="name" value={formData.name} onChange={handleChange} required />
+                        <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-1"><FiHome /> Nazwa zakładu</label>
+                        <InputField name="name" value={formData.name} onChange={handleChange} required placeholder="AutoFix Serwis" />
                     </div>
                     <div>
-                        <label className="block text-sm sm:text-base font-medium mb-1">Numer kontaktowy</label>
-                        <InputField name="phone" value={formData.phone} onChange={handleChange} required />
+                        <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-1"><FiPhone /> Numer kontaktowy</label>
+                        <InputField name="phone" value={formData.phone} onChange={handleChange} required placeholder="+48 123 456 789" />
                     </div>
                     <div>
-                        <label className="block text-sm sm:text-base font-medium mb-1">Ulica i numer</label>
-                        <InputField name="address" value={formData.address} onChange={handleChange} required />
+                        <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-1"><FiMapPin /> Ulica i numer</label>
+                        <InputField name="address" value={formData.address} onChange={handleChange} required placeholder="ul. Mechaników 12A" />
                     </div>
                     <div>
-                        <label className="block text-sm sm:text-base font-medium mb-1">Miasto</label>
-                        <InputField name="city" value={formData.city} onChange={handleChange} required />
+                        <label className="text-sm font-medium text-gray-700 mb-1">Miasto</label>
+                        <InputField name="city" value={formData.city} onChange={handleChange} required placeholder="Warszawa" />
                     </div>
                     <div className="sm:col-span-2">
-                        <label className="block text-sm sm:text-base font-medium mb-1">Opis</label>
-                        <textarea name="description" value={formData.description} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded-md resize-none h-24" />
+                        <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-1"><FiInfo /> Opis</label>
+                        <textarea
+                            name="description"
+                            value={formData.description}
+                            onChange={handleChange}
+                            placeholder="Opisz czym się zajmuje Twój warsztat..."
+                            className="w-full p-3 border border-gray-300 rounded-md resize-none h-28 text-sm"
+                        />
                     </div>
                     <div className="sm:col-span-2">
-                        <h3 className="text-md sm:text-lg font-semibold mb-2">Godziny otwarcia</h3>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <h3 className="text-lg font-semibold text-zinc-800 mb-2 flex items-center gap-2"><FiClock /> Godziny otwarcia</h3>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             {days.map(day => (
                                 <div key={day} className="flex flex-col sm:flex-row sm:items-center gap-2">
-                                    <span className="w-full sm:w-24 capitalize font-medium">{day}</span>
-                                    <input type="time" value={formData.opening_hours[day]?.open || "00:00"} onChange={e => handleHourChange(day, "open", e.target.value)} className="border rounded px-2 py-1 text-sm w-full sm:w-auto" />
+                                    <span className="w-full sm:w-28 capitalize font-medium text-sm text-gray-700">{day}</span>
+                                    <input
+                                        type="time"
+                                        value={formData.opening_hours[day]?.open || "00:00"}
+                                        onChange={e => handleHourChange(day, "open", e.target.value)}
+                                        className="border rounded px-3 py-1 text-sm w-full sm:w-auto"
+                                    />
                                     <span className="hidden sm:inline">–</span>
-                                    <input type="time" value={formData.opening_hours[day]?.close || "00:00"} onChange={e => handleHourChange(day, "close", e.target.value)} className="border rounded px-2 py-1 text-sm w-full sm:w-auto" />
+                                    <input
+                                        type="time"
+                                        value={formData.opening_hours[day]?.close || "00:00"}
+                                        onChange={e => handleHourChange(day, "close", e.target.value)}
+                                        className="border rounded px-3 py-1 text-sm w-full sm:w-auto"
+                                    />
                                 </div>
                             ))}
                         </div>

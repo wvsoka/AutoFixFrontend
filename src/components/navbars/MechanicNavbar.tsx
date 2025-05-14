@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { FiMenu, FiX } from "react-icons/fi";
+import { FiMenu, FiX, FiChevronDown } from "react-icons/fi";
 
 export const MechanicNavbar = () => {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const [dropdownOpen, setDropdownOpen] = useState(false);
 
     return (
         <nav className="bg-[#3D7CA9] text-white px-6 py-4 shadow-md">
@@ -25,12 +26,40 @@ export const MechanicNavbar = () => {
                     <Link to="/mechanic/myservices" className="hover:underline">
                         Moje usługi
                     </Link>
-                    <Link
-                        to="/mechanic/profile"
-                        className="bg-white text-[#3D7CA9] px-4 py-1 rounded-md font-semibold hover:bg-gray-100"
-                    >
-                        Profil
-                    </Link>
+
+                    <div className="relative">
+                        <button
+                            onClick={() => setDropdownOpen(!dropdownOpen)}
+                            className="flex items-center gap-1 bg-white text-[#3D7CA9] px-4 py-1 rounded-md font-semibold hover:bg-gray-100"
+                        >
+                            Profil <FiChevronDown />
+                        </button>
+                        {dropdownOpen && (
+                            <div className="absolute right-0 mt-2 w-48 bg-white rounded shadow-md text-[#1D3557] z-50">
+                                <Link
+                                    to="/mechanic/profile"
+                                    className="block px-4 py-2 hover:bg-gray-100"
+                                    onClick={() => setDropdownOpen(false)}
+                                >
+                                    Dane firmy
+                                </Link>
+                                <Link
+                                    to="/mechanic/settings"
+                                    className="block px-4 py-2 hover:bg-gray-100"
+                                    onClick={() => setDropdownOpen(false)}
+                                >
+                                    Ustawienia konta
+                                </Link>
+                                <Link
+                                    to="/mechanic/reviews"
+                                    className="block px-4 py-2 hover:bg-gray-100"
+                                    onClick={() => setDropdownOpen(false)}
+                                >
+                                    Moje opinie
+                                </Link>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
 
@@ -44,7 +73,7 @@ export const MechanicNavbar = () => {
                         Mój kalendarz
                     </Link>
                     <Link
-                        to="/mechanic/services"
+                        to="/mechanic/myservices"
                         className="px-4 py-2 hover:bg-[#2f6691] rounded"
                         onClick={() => setMobileMenuOpen(false)}
                     >
@@ -52,10 +81,24 @@ export const MechanicNavbar = () => {
                     </Link>
                     <Link
                         to="/mechanic/profile"
-                        className="px-4 py-2 bg-white text-[#3D7CA9] rounded-md font-semibold text-center"
+                        className="px-4 py-2 hover:bg-[#2f6691] rounded"
                         onClick={() => setMobileMenuOpen(false)}
                     >
-                        Profil
+                        Dane firmy
+                    </Link>
+                    <Link
+                        to="/mechanic/settings"
+                        className="px-4 py-2 hover:bg-[#2f6691] rounded"
+                        onClick={() => setMobileMenuOpen(false)}
+                    >
+                        Ustawienia konta
+                    </Link>
+                    <Link
+                        to="/mechanic/reviews"
+                        className="px-4 py-2 hover:bg-[#2f6691] rounded"
+                        onClick={() => setMobileMenuOpen(false)}
+                    >
+                        Moje opinie
                     </Link>
                 </div>
             )}
