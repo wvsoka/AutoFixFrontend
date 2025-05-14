@@ -14,6 +14,7 @@ import MyOpinionsPage from "./pages/client/MyOpinionsPage";
 import { MechanicReviewsPage } from "./pages/mechanic/MechanicMyReviewsPage";
 import { MechanicCalendar } from "./pages/mechanic/MechanicCalendar";
 import AppointmentsPage from "./pages/client/AppointmentsPage";
+import {MechanicSettings} from "./pages/mechanic/MechanicSettings";
 
 function App() {
     return (
@@ -30,6 +31,7 @@ function App() {
                     <Route path="/mechanic/myservices" element={<MechanicMyServicesPage />} />
                     <Route path="/mechanic/reviews" element={<MechanicReviewsPage />}/>
                     <Route path="/mechanic/calendar" element={<MechanicCalendar />} />
+                    <Route path="/mechanic/settings" element={<MechanicSettings/>} />
                 </Route>
                 <Route path="/services" element={<ListOfMechanics />} />
                 <Route path="/workshop" element={<WorkshopPage />} />

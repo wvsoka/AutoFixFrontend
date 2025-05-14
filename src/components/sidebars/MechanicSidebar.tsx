@@ -35,7 +35,7 @@ export const MechanicSidebar = ({ fullName, email }: MechanicSidebarProps) => {
                     Dane firmy
                 </Link>
                 <Link
-                    to="/mechanic/profile/settings"
+                    to="/mechanic/settings"
                     className={`px-4 py-2 rounded text-left hover:bg-gray-100 ${
                         location.pathname.includes("/settings") ? "bg-gray-100 font-semibold" : ""
                     }`}

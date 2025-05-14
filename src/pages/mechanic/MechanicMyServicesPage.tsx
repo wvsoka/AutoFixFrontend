@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import axiosInstance from "../../api/axiosInstance";
 import { FiPlus } from "react-icons/fi";
+import { SecondaryButton } from "../../components/buttons/SecondaryButton";
 
 interface Service {
     id: number;
@@ -135,51 +136,53 @@ export const MechanicMyServicesPage = () => {
     };
 
     return (
-        <div className=" min-h-screen">
-            <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-bold text-[#1D3557]">Moje usługi</h1>
-                <button
-                    onClick={handleAddNew}
-                    className="flex items-center gap-2 bg-[#1D3557] text-white px-4 py-2 rounded shadow hover:bg-[#16324c]"
-                >
-                    <FiPlus /> Dodaj nową usługę
-                </button>
-            </div>
-
-            {loading ? (
-                <p>Ładowanie...</p>
-            ) : error ? (
-                <p className="text-red-600">{error}</p>
-            ) : (
-                <div className="space-y-4">
-                    {services.map((service) => (
-                        <div
-                            key={service.id}
-                            className="bg-[#E6F3F8] border border-gray-200 p-4 rounded-md shadow-sm flex justify-between items-center"
-                        >
-                            <div>
-                                <h3 className="font-semibold text-lg">{service.name}</h3>
-                                <p>Cena: {service.price} zł</p>
-                                <p>Czas: {service.duration} min</p>
-                            </div>
-                            <div className="flex gap-2">
-                                <button
-                                    onClick={() => handleEdit(service)}
-                                    className="bg-teal-100 text-teal-800 px-3 py-1 rounded hover:bg-teal-200"
-                                >
-                                    Edytuj
-                                </button>
-                                <button
-                                    onClick={() => handleDelete(service.id)}
-                                    className="bg-red-100 text-red-800 px-3 py-1 rounded hover:bg-red-200"
-                                >
-                                    Usuń usługę
-                                </button>
-                            </div>
-                        </div>
-                    ))}
+        <div className="min-h-screen bg-white px-6 py-10">
+            <div className="max-w-4xl mx-auto">
+                <div className="flex justify-between items-center mb-6">
+                    <h1 className="text-2xl font-bold text-[#1D3557]">Moje usługi</h1>
+                    <button
+                        onClick={handleAddNew}
+                        className="flex items-center gap-2 bg-[#1D3557] text-white px-4 py-2 rounded-lg shadow hover:bg-[#2B4E73] transition"
+                    >
+                        <FiPlus /> Dodaj nową usługę
+                    </button>
                 </div>
-            )}
+
+                {loading ? (
+                    <p className="text-gray-600">Ładowanie...</p>
+                ) : error ? (
+                    <p className="text-red-600">{error}</p>
+                ) : (
+                    <div className="space-y-4">
+                        {services.map((service) => (
+                            <div
+                                key={service.id}
+                                className="border border-gray-200 p-5 rounded-md shadow-sm flex justify-between items-center bg-[#F9FAFB]"
+                            >
+                                <div>
+                                    <h3 className="font-semibold text-lg text-[#1D3557]">{service.name}</h3>
+                                    <p className="text-sm text-gray-700">Cena: {service.price} zł</p>
+                                    <p className="text-sm text-gray-700">Czas: {service.duration} min</p>
+                                </div>
+                                <div className="flex gap-2">
+                                    <button
+                                        onClick={() => handleEdit(service)}
+                                        className="px-4 py-2 bg-[#1D3557] text-white rounded-md hover:bg-[#2B4E73] transition shadow"
+                                    >
+                                        Edytuj
+                                    </button>
+                                    <button
+                                        onClick={() => handleDelete(service.id)}
+                                        className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition shadow"
+                                    >
+                                        Usuń usługę
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
 
             {isEditing && (
                 <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
@@ -235,13 +238,13 @@ export const MechanicMyServicesPage = () => {
                             <button
                                 type="button"
                                 onClick={() => setIsEditing(false)}
-                                className="text-gray-600 hover:text-black"
+                                className="px-4 py-2 text-gray-700 border border-gray-300 rounded-md hover:bg-gray-100"
                             >
                                 Anuluj
                             </button>
                             <button
                                 type="submit"
-                                className="bg-[#1D3557] text-white px-4 py-2 rounded hover:bg-[#16324c]"
+                                className="px-4 py-2 bg-[#1D3557] text-white rounded-md hover:bg-[#2B4E73] transition shadow"
                             >
                                 Zapisz
                             </button>
