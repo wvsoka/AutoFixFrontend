@@ -192,7 +192,7 @@ export const MechanicCalendar = () => {
 
   	const handleSelectEvent = async (event: CalendarExtendedEvent) => {
     	if (event.type === "appointment" && event.status !== "confirmed") {
-    	  	const confirm = window.confirm(`Potwierdzić wizytę "${event.title}"?`);
+    	  	const confirm = window.confirm(`${event.title} - ${event.start?.toLocaleString()}\nPotwierdzić wizytę?`);
     	  	if (confirm) {
     	    	try {
     	      		await axiosInstance.patch(`/api/mechanic/appointments/${event.originalId}/update-status/`, {
@@ -210,10 +210,7 @@ export const MechanicCalendar = () => {
     	    	}
     	  	}
     	} else if (event.type === "appointment") {
-			alert(`Szczegóły wizyty:
-				${event.title}
-				Termin: ${event.start?.toLocaleString()}
-				`);
+			alert(`Szczegóły wizyty:\n${event.title}\nTermin: ${event.start?.toLocaleString()}`);
 		}
   	};
 

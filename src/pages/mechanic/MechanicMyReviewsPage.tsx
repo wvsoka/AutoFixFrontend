@@ -32,9 +32,11 @@ export const MechanicReviewsPage = () => {
         axiosInstance.get("/api/mechanic/me/")
             .then((res) => {
                 const { id, name } = res.data;
+                const email = res.data.user.email;
+                console.log(email);
                 setMechanicInfo({
                     full_name: name,
-                    email: "brak@emaila.pl",
+                    email: email,
                 });
                 return axiosInstance.get(`/api/reviews/mechanic/${id}/reviews/`);
             })
