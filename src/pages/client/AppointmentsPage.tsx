@@ -38,7 +38,6 @@ const demoAppointments: Appointment[] = [
 ];
 
 const AppointmentCard = ({ appointment }: { appointment: Appointment }) => {
-    console.log(appointment);
     const parsedDate = dayjs(appointment.date);
     const formattedDate = parsedDate.format("D MMMM YYYY");
     const time = parsedDate.format("HH:mm");
