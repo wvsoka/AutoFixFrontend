@@ -8,8 +8,8 @@ interface RawReviewAPI {
     note: number;
     content: string;
     created_at: string;
-    user: number;
-    service: number;
+    user_email: string;      // nowe pole z backendu
+    service_name: string;    // nowe pole z backendu
 }
 
 interface Opinion {
@@ -33,7 +33,6 @@ export const MechanicReviewsPage = () => {
             .then((res) => {
                 const { id, name } = res.data;
                 const email = res.data.user.email;
-                console.log(email);
                 setMechanicInfo({
                     full_name: name,
                     email: email,
@@ -51,9 +50,9 @@ export const MechanicReviewsPage = () => {
 
                 const processed: Opinion[] = reviews.map((r) => ({
                     rating: Math.round(r.note) / 2,
-                    title: `Usługa ID ${r.service}`,
+                    title: r.service_name, // zamiast ID usługi
                     description: r.content,
-                    author: `Użytkownik ID ${r.user}`,
+                    author: r.user_email, // zamiast ID użytkownika
                     date: new Date(r.created_at).toLocaleDateString("pl-PL"),
                     createdAt: r.created_at,
                     shopName: "",
@@ -86,16 +85,13 @@ export const MechanicReviewsPage = () => {
 
     return (
         <div className="flex flex-col-reverse lg:flex-row-reverse min-h-screen bg-white">
-            <MechanicSidebar
-                fullName={mechanicInfo.full_name}
-                email={mechanicInfo.email}
-            />
+            <MechanicSidebar />
             <main className="flex-1 px-6 py-10">
                 <h2 className="text-3xl font-bold text-zinc-800 mb-8">Opinie o Twoim warsztacie</h2>
 
                 {averageRating !== null && (
                     <div className="bg-zinc-50 rounded-xl p-6 mb-10 text-center">
-                    <p className="text-xl font-semibold text-zinc-700 mb-1">
+                        <p className="text-xl font-semibold text-zinc-700 mb-1">
                             Średnia ocena: {averageRating.toFixed(1)} / 5
                         </p>
                         <div className="flex justify-center text-yellow-400 text-2xl mb-2" aria-hidden="true">
@@ -127,8 +123,7 @@ export const MechanicReviewsPage = () => {
                     {sortedOpinions.length > 0 ? (
                         sortedOpinions.map((opinion, idx) => (
                             <div key={idx} className="bg-white rounded-xl p-4 sm:p-6">
-
-                            <OpinionCard {...opinion} />
+                                <OpinionCard {...opinion} />
                             </div>
                         ))
                     ) : (
