@@ -126,46 +126,46 @@ const AppointmentCard = ({ appointment }: { appointment: Appointment }) => {
                         <h2 className="text-xl font-semibold mb-4">Dodaj opinię</h2>
                 
                         <label className="block mb-2">
-                              Ocena:
-                              <select
+                            Ocena:
+                            <select
                                 className="w-full mt-1 border rounded p-2"
                                 value={rating}
                                 onChange={(e) => setRating(Number(e.target.value))}
-                              >
-                                {[5, 4, 3, 2, 1].map((val) => (
-                                  <option key={val} value={val}>
+                            >
+                            {[5, 4, 3, 2, 1].map((val) => (
+                                <option key={val} value={val}>
                                     {val} ★
-                                  </option>
-                                ))}
-                              </select>
-                            </label>
+                                </option>
+                            ))}
+                            </select>
+                        </label>
                             
-                            <label className="block mb-4">
-                              Opinia:
-                              <textarea
+                        <label className="block mb-4">
+                            Opinia:
+                            <textarea
                                 className="w-full mt-1 border rounded p-2"
                                 rows={4}
                                 value={comment}
                                 onChange={(e) => setComment(e.target.value)}
-                              />
-                            </label>
-                            
-                            <div className="flex justify-end gap-2">
-                              <button
+                            />
+                        </label>
+
+                        <div className="flex justify-end gap-2">
+                            <button
                                 className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
                                 onClick={() => setShowModal(false)}
-                              >
-                                Anuluj
-                              </button>
-                              <button
-                                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-                                onClick={handleSubmit}
-                              >
+                            >
+                            Anuluj
+                            </button>
+                                <button
+                                    className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                                    onClick={handleSubmit}
+                                >
                                 Wyślij
-                              </button>
+                                </button>
                             </div>
-                          </div>
                         </div>
+                    </div>
                 )}
             </div>
         </div>
