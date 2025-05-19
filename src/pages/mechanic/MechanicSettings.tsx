@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import axiosInstance from "../../api/axiosInstance";
 import { MechanicSidebar } from "../../components/sidebars/MechanicSidebar";
 import { SecondaryButton } from "../../components/buttons/SecondaryButton";
 
@@ -12,18 +13,29 @@ export const MechanicSettings = () => {
     const [successMessage, setSuccessMessage] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const [mechanicInfo, setMechanicInfo] = useState({
+        full_name: "",
+        email: "",
+    });
 
-    const mechanicInfo = {
-        full_name: "Jan Kowalski",
-        email: "jan.kowalski@example.com",
-    };
+    useEffect(() => {
+        axiosInstance.get("/api/mechanic/me/")
+            .then(res => {
+                const full_name = res.data.name || "";
+                const email = res.data.user?.email || "";
+                setMechanicInfo({ full_name, email });
+            })
+            .catch(err => {
+                console.error("Błąd przy pobieraniu danych mechanika:", err);
+            });
+    }, []);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setSuccessMessage("");
         setErrorMessage("");
@@ -33,7 +45,24 @@ export const MechanicSettings = () => {
             return;
         }
 
-        setSuccessMessage("Hasło zostało zmienione (mock)!");
+        try {
+            const response = await axiosInstance.post("/api/auth/password/change/", {
+                old_password: formData.currentPassword,
+                new_password: formData.newPassword,
+            });
+
+            if (response.status === 200) {
+                setSuccessMessage("Hasło zostało zmienione.");
+                setFormData({
+                    currentPassword: "",
+                    newPassword: "",
+                    confirmPassword: "",
+                });
+            }
+        } catch (error: any) {
+            const detail = error.response?.data?.old_password || error.response?.data?.new_password || "Wystąpił błąd.";
+            setErrorMessage(typeof detail === "string" ? detail : "Nie udało się zmienić hasła.");
+        }
     };
 
     const handleDeleteAccount = () => {
@@ -43,12 +72,13 @@ export const MechanicSettings = () => {
 
     return (
         <div className="flex flex-col-reverse lg:flex-row-reverse min-h-screen bg-white">
-            <MechanicSidebar fullName={mechanicInfo.full_name} email={mechanicInfo.email} />
+            <MechanicSidebar />
             <main className="flex-1 px-6 py-10">
                 <h2 className="text-2xl font-bold text-[#1D3557] mb-6">Ustawienia konta</h2>
 
                 <form onSubmit={handleSubmit} className="bg-white border border-gray-200 p-6 rounded-lg shadow-sm space-y-4 max-w-2xl mx-auto">
                     <h3 className="text-lg font-semibold text-[#1D3557]">Zmień hasło</h3>
+
                     <div>
                         <label className="block text-sm font-medium mb-1">Aktualne hasło</label>
                         <input
@@ -60,6 +90,7 @@ export const MechanicSettings = () => {
                             required
                         />
                     </div>
+
                     <div>
                         <label className="block text-sm font-medium mb-1">Nowe hasło</label>
                         <input
@@ -71,6 +102,7 @@ export const MechanicSettings = () => {
                             required
                         />
                     </div>
+
                     <div>
                         <label className="block text-sm font-medium mb-1">Powtórz nowe hasło</label>
                         <input
