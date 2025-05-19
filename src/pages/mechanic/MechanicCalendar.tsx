@@ -20,24 +20,24 @@ const demoEvents: CalendarExtendedEvent[] = [
 	  	id: "demo-1",
 	  	type: "appointment",
 	  	title: "Wymiana klocków hamulcowych",
-		start: new Date("2025-05-14T10:00:00"),
-		end: new Date("2025-05-14T11:30:00"),
+		start: new Date("2025-05-21T10:00:00"),
+		end: new Date("2025-05-21T11:30:00"),
 	  	status: "confirmed",
 	},
 	{
 	  	id: "demo-2",
 		type: "appointment",
 	  	title: "Serwis klimatyzacji",
-		start: new Date("2025-05-13T13:30:00"),
-		end: new Date("2025-05-13T14:30:00"),
+		start: new Date("2025-05-20T13:30:00"),
+		end: new Date("2025-05-20T14:30:00"),
 	  	status: "pending",
 	},
 	{
 		id: "demo-3",
 	  	type: "appointment",
 		title: "Wymiana oleju",
-	  	start: new Date("2025-05-15T13:00:00"),
-	  	end: new Date("2025-05-15T13:30:00"),
+	  	start: new Date("2025-05-22T13:00:00"),
+	  	end: new Date("2025-05-22T13:30:00"),
 		status: "confirmed",
   },
 ];
@@ -108,7 +108,6 @@ export const MechanicCalendar = () => {
         	]);
 
         	console.log("Appointments:", appointmentsRes.data);
-        	console.log("Working Hours:", workingHoursRes.data);
 			console.log("Services:", servicesList.data);
 
 			//  Mapping appointments.
@@ -210,7 +209,7 @@ export const MechanicCalendar = () => {
     	    	}
     	  	}
     	} else if (event.type === "appointment") {
-			alert(`Szczegóły wizyty:\n${event.title}\nTermin: ${event.start?.toLocaleString()}`);
+			alert(`Szczegóły wizyty:\n${event.title} (${event.status})\nTermin: ${event.start?.toLocaleString()}`);
 		}
   	};
 
