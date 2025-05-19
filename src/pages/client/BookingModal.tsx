@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./BookingModal.css";
-import {SecondaryButton} from "../../components/buttons/SecondaryButton";
+import { SecondaryButton } from "../../components/buttons/SecondaryButton";
 
 const mockAvailability: Record<string, string[]> = {
     "2025-05-20": ["06:20", "06:40"],
@@ -28,6 +28,7 @@ const getDayLabel = (date: Date): string => {
 const BookingModal: React.FC<{ onClose: () => void; serviceName: string }> = ({ onClose, serviceName }) => {
     const [startDate, setStartDate] = useState(new Date());
     const [selected, setSelected] = useState<{ date: string; time: string } | null>(null);
+    const [bookingStatus, setBookingStatus] = useState<string | null>(null); // Stan do wyświetlania komunikatu
 
     const visibleDates = Array.from({ length: 7 }, (_, i) => {
         const date = new Date(startDate);
@@ -47,6 +48,20 @@ const BookingModal: React.FC<{ onClose: () => void; serviceName: string }> = ({ 
         const newDate = new Date(startDate);
         newDate.setDate(newDate.getDate() - 7);
         setStartDate(newDate);
+    };
+
+    const handleConfirm = () => {
+        if (selected) {
+            const isBookingSuccess = Math.random() > 0.2; // Zakładając, że 80% rezerwacji się udaje mockupowo, potem zmienic na faktyczny sukces
+            if (isBookingSuccess) {
+                setBookingStatus(`Udało Ci się zarezerwować usługę "${serviceName}" dnia ${selected.date} o godzinie ${selected.time}.`);
+            } else {
+                setBookingStatus("Nie udało się dokonać rezerwacji. Przepraszamy. Proszę spróbować ponownie.");
+            }
+            setTimeout(() => {
+                onClose();
+            }, 5000); // Czekamy 2 sekundy, żeby użytkownik zobaczył komunikat
+        }
     };
 
     return (
@@ -90,9 +105,13 @@ const BookingModal: React.FC<{ onClose: () => void; serviceName: string }> = ({ 
                 {selected && (
                     <div className="confirmation">
                         Wybrano: <strong>{selected.date}</strong> o <strong>{selected.time}</strong>
-                        <SecondaryButton className="confirm-button-calendar">Potwierdź</SecondaryButton>
+                        <SecondaryButton className="confirm-button-calendar" onClick={handleConfirm}>
+                            Potwierdź
+                        </SecondaryButton>
                     </div>
                 )}
+
+                {bookingStatus && <div className="booking-status">{bookingStatus}</div>} {/* Wyświetlanie komunikatu */}
             </div>
         </div>
     );
