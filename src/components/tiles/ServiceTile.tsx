@@ -7,9 +7,10 @@ interface ServiceTileProps {
     duration: string;
     price: string;
     image?: string;
+    onBookClick?: () => void;
 }
 
-const ServiceTile: React.FC<ServiceTileProps> = ({ title, duration, price, image }) => {
+const ServiceTile: React.FC<ServiceTileProps> = ({ title, duration, price, image,  onBookClick }) => {
     return (
         <div className="service-tile">
             <div className="tile-left">
@@ -21,7 +22,7 @@ const ServiceTile: React.FC<ServiceTileProps> = ({ title, duration, price, image
             </div>
             <div className="tile-right">
                 <span className="price">{price}</span>
-                <SecondaryButton>Umów</SecondaryButton>
+                <SecondaryButton onClick={onBookClick}>Umów</SecondaryButton>
             </div>
         </div>
     );
