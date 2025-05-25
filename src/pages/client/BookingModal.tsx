@@ -1,16 +1,8 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import "./BookingModal.css";
 import { SecondaryButton } from "../../components/buttons/SecondaryButton";
+import axiosInstance from "../../api/axiosInstance";
 
-const mockAvailability: Record<string, string[]> = {
-    "2025-05-20": ["06:20", "06:40"],
-    "2025-05-21": ["06:20", "06:40", "07:00", "07:20", "08:20", "09:00", "09:40"],
-    "2025-05-22": ["06:00", "06:20", "06:40", "07:00", "07:20", "08:00", "09:20"],
-    "2025-05-23": ["06:00", "06:20", "06:40", "07:20", "08:00", "08:40", "09:20"],
-    "2025-05-24": ["07:00", "07:30"],
-    "2025-05-25": ["08:00"],
-    "2025-05-26": ["06:00", "07:00"],
-};
 
 const getDayLabel = (date: Date): string => {
     const labels: Record<number, string> = {
@@ -25,10 +17,53 @@ const getDayLabel = (date: Date): string => {
     return labels[date.getDay()];
 };
 
-const BookingModal: React.FC<{ onClose: () => void; serviceName: string }> = ({ onClose, serviceName }) => {
+const BookingModal: React.FC<{ onClose: () => void; serviceName: string; serviceId: number }> = ({ onClose, serviceName, serviceId }) => {
     const [startDate, setStartDate] = useState(new Date());
     const [selected, setSelected] = useState<{ date: string; time: string } | null>(null);
-    const [bookingStatus, setBookingStatus] = useState<string | null>(null); // Stan do wyświetlania komunikatu
+    const [bookingStatus, setBookingStatus] = useState<string | null>(null);
+    const [availability, setAvailability] = useState<Record<string, string[]>>({});
+
+    useEffect(() => {
+        const fetchAvailability = async () => {
+            if (!serviceId) return;
+            const newAvailability: Record<string, string[]> = {};
+
+            for (const date of visibleDates) {
+                const formatted = formatDate(date);
+                try {
+                    const res = await axiosInstance.get(`/api/client/available-timeslots/${serviceId}/${formatted}/`);
+                    newAvailability[formatted] = res.data.available_slots;
+                } catch (e) {
+                    newAvailability[formatted] = [];
+                }
+            }
+
+            setAvailability(newAvailability);
+        };
+
+        fetchAvailability();
+    }, [startDate, serviceId]);
+
+    useEffect(() => {
+        const fetchAvailability = async () => {
+            if (!serviceId) return;
+            const newAvailability: Record<string, string[]> = {};
+
+            for (const date of visibleDates) {
+                const formatted = formatDate(date);
+                try {
+                    const res = await axiosInstance.get(`/api/client/available-timeslots/${serviceId}/${formatted}/`);
+                    newAvailability[formatted] = res.data.available_slots;
+                } catch (e) {
+                    newAvailability[formatted] = [];
+                }
+            }
+
+            setAvailability(newAvailability);
+        };
+
+        fetchAvailability();
+    }, [startDate, serviceId]);
 
     const visibleDates = Array.from({ length: 7 }, (_, i) => {
         const date = new Date(startDate);
@@ -50,17 +85,20 @@ const BookingModal: React.FC<{ onClose: () => void; serviceName: string }> = ({ 
         setStartDate(newDate);
     };
 
-    const handleConfirm = () => {
-        if (selected) {
-            const isBookingSuccess = Math.random() > 0.2; // Zakładając, że 80% rezerwacji się udaje mockupowo, potem zmienic na faktyczny sukces
-            if (isBookingSuccess) {
+    const handleConfirm = async () => {
+        if (selected && serviceId) {
+            try {
+                await axiosInstance.post("/api/client/appointments/", {
+                    service: serviceId,
+                    date: selected.date,
+                    time: selected.time
+                });
+
                 setBookingStatus(`Udało Ci się zarezerwować usługę "${serviceName}" dnia ${selected.date} o godzinie ${selected.time}.`);
-            } else {
-                setBookingStatus("Nie udało się dokonać rezerwacji. Przepraszamy. Proszę spróbować ponownie.");
+                setTimeout(() => onClose(), 3000);
+            } catch (e) {
+                setBookingStatus("Nie udało się dokonać rezerwacji. Proszę spróbować ponownie.");
             }
-            setTimeout(() => {
-                onClose();
-            }, 5000); // Czekamy 2 sekundy, żeby użytkownik zobaczył komunikat
         }
     };
 
@@ -79,22 +117,25 @@ const BookingModal: React.FC<{ onClose: () => void; serviceName: string }> = ({ 
                 <div className="time-grid">
                     {visibleDates.map((date) => {
                         const iso = formatDate(date);
-                        const times = mockAvailability[iso] || [];
+                        const times = availability[iso] || [];
                         return (
                             <div key={iso} className="day-column">
                                 <div className="day-header">
                                     <strong>{getDayLabel(date)}</strong>
                                     <div className="day-date">{date.toLocaleDateString()}</div>
                                 </div>
-                                {times.length > 0 ? times.map((time) => (
-                                    <button
-                                        key={time}
-                                        className={`time-button ${selected?.date === iso && selected?.time === time ? "selected" : ""}`}
-                                        onClick={() => setSelected({ date: iso, time })}
-                                    >
-                                        {time}
-                                    </button>
-                                )) : (
+                                {times.length > 0 ? times.map((time) => {
+                                    const formattedTime = time.length >= 5 ? time.slice(11, 16) : time; // np. "2025-05-28T06:30:00" -> "06:30"
+                                    return (
+                                        <button
+                                            key={time}
+                                            className={`time-button ${selected?.date === iso && selected?.time === time ? "selected" : ""}`}
+                                            onClick={() => setSelected({ date: iso, time })}
+                                        >
+                                            {formattedTime}
+                                        </button>
+                                    );
+                                }) : (
                                     <div className="no-slots">–</div>
                                 )}
                             </div>

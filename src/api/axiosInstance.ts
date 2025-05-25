@@ -36,7 +36,6 @@ axiosInstance.interceptors.request.use(
             }
             config.headers.Authorization = `Bearer ${accessToken}`;
         }
-        console.log("Sending request to:", config.url, "with token:", config.headers.Authorization);
         return config;
     },
     (error) => Promise.reject(error)

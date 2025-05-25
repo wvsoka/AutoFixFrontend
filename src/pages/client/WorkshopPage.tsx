@@ -18,11 +18,13 @@ const WorkshopPage: React.FC = () => {
     const [services, setServices] = useState([]);
     const [opinions, setOpinions] = useState([]);
     const [averageRating, setAverageRating] = useState<number | null>(null);
-    const accessToken = localStorage.getItem("accessToken");
-    console.log("Access Token:", accessToken);
-    const handleBookClick = (serviceName: string) => {
+    const [serviceId, setServiceId] = useState<number>(0);
+    // const accessToken = localStorage.getItem("accessToken");
+    // console.log("Access Token:", accessToken);
+    const handleBookClick = (serviceName: string, serviceId: number) => {
         setSelectedService(serviceName);
         setBookingOpen(true);
+        setServiceId(serviceId);
     };
 
     useEffect(() => {
@@ -95,7 +97,7 @@ const WorkshopPage: React.FC = () => {
                                 duration={service.duration || "Nie podano"}
                                 price={`${service.price} zł`}
                                 image="/placeholder.svg"
-                                onBookClick={() => handleBookClick(service.name)}
+                                onBookClick={() => handleBookClick(service.name, service.id)}
                             />
                         ))}
                     </div>
@@ -104,6 +106,7 @@ const WorkshopPage: React.FC = () => {
                         <BookingModal
                             onClose={() => setBookingOpen(false)}
                             serviceName={selectedService}
+                            serviceId={serviceId}
                         />
                     )}
             </div>
