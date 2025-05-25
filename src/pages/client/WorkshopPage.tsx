@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import './WorkshopPage.css';
 import ClientNavbar from "../../components/navbars/ClientNavbar";
 import ServiceTile from "../../components/tiles/ServiceTile";
@@ -6,15 +6,35 @@ import WorkshopDetailsCard from "../../components/tiles/WorkshopDetailsCard";
 import RatingCard from "../../components/tiles/RatingCard";
 import OpinionCard from "../../components/tiles/OpinionCard";
 import BookingModal from "./BookingModal";
+import { useLocation, useParams } from "react-router-dom";
+import axiosInstance from '../../api/axiosInstance';
 
 const WorkshopPage: React.FC = () => {
     const [bookingOpen, setBookingOpen] = useState(false);
     const [selectedService, setSelectedService] = useState<string>("");
+    const location = useLocation();
+    const { mechanic } = location.state || {};
+    const [services, setServices] = useState([]);
 
     const handleBookClick = (serviceName: string) => {
         setSelectedService(serviceName);
         setBookingOpen(true);
     };
+
+    useEffect(() => {
+        const fetchServices = async () => {
+            if (!mechanic?.id) return;
+            try {
+                const res = await axiosInstance.get(`/api/services/?mechanic_id=${mechanic.id}`);
+                setServices(res.data);
+            } catch (err) {
+                console.error("Błąd przy pobieraniu usług:", err);
+            }
+        };
+
+        fetchServices();
+    }, [mechanic]);
+
     return (
         <div className="workshop-page">
             <ClientNavbar/>
@@ -27,24 +47,22 @@ const WorkshopPage: React.FC = () => {
                         className="workshop-image"
                     />
                     <div className="workshop-info">
-                        <h1>Przykładowa nazwa mechanika</h1>
-                        <p>Mickiewicza 174, 54-196 Szczecin</p>
+                        {mechanic && (
+                            <>
+                                <h1>{mechanic.name}</h1>
+                                <p>{mechanic.address}, {mechanic.city}</p>
+                            </>
+                        )}
                     </div>
                 </div>
                 <div className="right-side">
-                    <WorkshopDetailsCard
-                        name="Lux Auto"
-                        description="Lux Auto Centrum to nowoczesny zakład mechaniczny oferujący kompleksowe usługi..."
-                        openingHours={[
-                            {day: "Pon", hours: "8–16"},
-                            {day: "Wt", hours: "8–16"},
-                            {day: "Śr", hours: "8–16"},
-                            {day: "Czw", hours: "8–16"},
-                            {day: "Pt", hours: "8–14"},
-                            {day: "Sob", hours: "10–20", isClosed: true},
-                            {day: "Niedz", hours: "Nieczynne", isClosed: true}
-                        ]}
-                    />
+                    {mechanic && (
+                        <WorkshopDetailsCard
+                            name={mechanic.name}
+                            description={mechanic.description}
+                            openingHours={[] /* tutaj możesz wstawić dane jeśli masz */}
+                        />
+                    )}
                 </div>
             </div>
 
