@@ -68,7 +68,7 @@ const ListOfMechanics: React.FC = () => {
                         </div>
                         <div className="mechanic-rating">
                             {'★'.repeat(5)}
-                            <ArrowRightButton onClick={() => navigate(`/workshop/${mech.id}`)} />
+                            <ArrowRightButton onClick={() => navigate(`/workshop/${mech.id}`, { state: { mechanic: mech } })} />
                         </div>
                     </div>
                 ))}
