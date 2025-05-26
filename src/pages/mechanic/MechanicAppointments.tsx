@@ -8,8 +8,10 @@ interface Appointment {
 	id: number;
 	client_user: {
 		id: number;
+        email: string;
 		name: string;
 		surname: string;
+        phone: string;
 	};
 	service: {
 		id: number;
@@ -19,159 +21,193 @@ interface Appointment {
 	status: "pending" | "confirmed" | "cancelled" | "completed";
 }
 
+const demoAppointments: Appointment[] = [
+	{
+		id: 1,
+		date: "2025-05-21T10:00:00",
+		status: "pending",
+		client_user: {
+			id: 1,
+			email: "jan.kowalski@example.com",
+			name: "Jan",
+			surname: "Kowalski",
+			phone: "123456789",
+		},
+		service: {
+			id: 101,
+			name: "Wymiana oleju",
+		},
+	},
+	{
+		id: 2,
+		date: "2025-05-22T14:00:00",
+		status: "confirmed",
+		client_user: {
+			id: 2,
+			email: "anna.nowak@example.com",
+			name: "Anna",
+			surname: "Nowak",
+			phone: "987654321",
+		},
+		service: {
+			id: 102,
+			name: "Serwis klimatyzacji",
+		},
+	},
+	{
+		id: 3,
+		date: "2025-05-19T09:00:00",
+		status: "cancelled",
+		client_user: {
+			id: 3,
+			email: "piotr.w@example.com",
+			name: "Piotr",
+			surname: "Wiśniewski",
+			phone: "555666777",
+		},
+		service: {
+			id: 103,
+			name: "Diagnostyka komputerowa",
+		},
+	},
+];
+
 const AppointmentCard = ({
 	appointment,
 	onStatusChange,
 }: {
 	appointment: Appointment;
-	onStatusChange: (id: number, status: string) => void;
+	onStatusChange: (id: number, status: Appointment["status"]) => void;
 }) => {
 	const parsedDate = dayjs(appointment.date);
-	const formattedDate = parsedDate.format("D MMMM YYYY");
-	const time = parsedDate.format("HH:mm");
-	const day = parsedDate.format("dddd");
-
-	const handleConfirm = async () => {
-		try {
-			await axiosInstance.patch(
-				`/api/mechanic/appointments/${appointment.id}/update-status/`,
-				{ status: "confirmed" }
-			);
-			onStatusChange(appointment.id, "confirmed");
-		} catch (err) {
-			alert("Błąd przy potwierdzaniu wizyty.");
-		}
-	};
-
-	const handleCancel = async () => {
-		if (!window.confirm("Czy na pewno odwołać wizytę?")) return;
-		try {
-			await axiosInstance.patch(
-				`/api/mechanic/appointments/${appointment.id}/update-status/`,
-				{ status: "cancelled" }
-			);
-			onStatusChange(appointment.id, "cancelled");
-		} catch (err) {
-			alert("Błąd przy odwoływaniu wizyty.");
-		}
-	};
+	const formattedDate = parsedDate.format("D MMMM YYYY, HH:mm");
 
 	return (
-		<div className="border rounded-2xl shadow-sm p-4 mb-4 bg-white">
-			<div className="flex justify-between">
+		<div className="border rounded-lg shadow p-4 mb-4 bg-white">
+			<div className="flex justify-between items-center">
 				<div>
-					<h3 className="text-lg font-semibold">
-						{appointment.client_user.name} {appointment.client_user.surname}
+					<h3 className="font-semibold text-lg">
+						{appointment.service.name}
+                        <br/ >{formattedDate}
 					</h3>
-					<p className="text-sm text-gray-500">{appointment.service.name}</p>
-					<p className="text-sm mt-1">
-						{formattedDate}, {day} — {time}
+					<p className="text-sm text-gray-600">
+                        {appointment.client_user.name} {appointment.client_user.surname}
+					</p>
+					<p className="text-sm text-gray-500">
+						Tel: {appointment.client_user.phone}
 					</p>
 				</div>
-				<div className="text-sm flex flex-col justify-between items-end">
-					<span
-						className="px-2 py-1 rounded-full text-white text-xs mb-2"
-						style={{
-							backgroundColor:
-								appointment.status === "confirmed"
-									? "#4ade80"
-									: appointment.status === "pending"
-									? "#facc15"
-									: "#f87171",
-						}}
-					>
-						{appointment.status}
-					</span>
 
-					{appointment.status === "pending" && (
-						<div className="space-x-2">
-							<button
-								className="text-green-600 hover:underline"
-								onClick={handleConfirm}
-							>
-								Potwierdź
-							</button>
-							<button
-								className="text-red-600 hover:underline"
-								onClick={handleCancel}
-							>
-								Odwołaj
-							</button>
-						</div>
-					)}
-				</div>
+				{appointment.status === "pending" && (
+					<div className="flex gap-2">
+						<button
+							className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600"
+							onClick={() => onStatusChange(appointment.id, "confirmed")}
+						>
+							Potwierdź
+						</button>
+						<button
+							className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+							onClick={() => onStatusChange(appointment.id, "cancelled")}
+						>
+							Odwołaj
+						</button>
+					</div>
+				)}
+
+				{appointment.status === "confirmed" && (
+					<span className="px-3 py-1 bg-blue-100 text-blue-700 rounded text-sm">
+						Potwierdzona
+					</span>
+				)}
+
+				{appointment.status === "cancelled" && (
+					<span className="px-3 py-1 bg-gray-200 text-gray-600 rounded text-sm">
+						Odwołana
+					</span>
+				)}
+
+				{appointment.status === "completed" && (
+					<span className="px-3 py-1 bg-green-100 text-green-700 rounded text-sm">
+						Zakończona
+					</span>
+				)}
 			</div>
 		</div>
 	);
 };
 
-const MechanicAppointments = () => {
+const MechanicAppointmentsPage = () => {
 	const [appointments, setAppointments] = useState<Appointment[]>([]);
 	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
-		axiosInstance
-			.get<Appointment[]>("/api/mechanic/appointments/")
-			.then((res) => {
-				setAppointments(res.data);
-			})
-			.catch((err) => {
-				console.error("Błąd podczas pobierania wizyt:", err);
-			})
-			.finally(() => setLoading(false));
+		const fetchAppointments = async () => {
+			try {
+				const res = await axiosInstance.get("/api/mechanic/appointments/");
+				setAppointments([...res.data, ...demoAppointments]);
+			} catch (err) {
+				console.error("Błąd ładowania wizyt:", err);
+				setAppointments(demoAppointments); // fallback
+			} finally {
+				setLoading(false);
+			}
+		};
+		fetchAppointments();
 	}, []);
 
-	const handleStatusChange = (id: number, newStatus: string) => {
-		setAppointments((prev) =>
-			prev.map((a) =>
-				a.id === id ? { ...a, status: newStatus as Appointment["status"] } : a
-			)
-		);
+	const handleStatusChange = async (id: number, newStatus: Appointment["status"]) => {
+		try {
+			await axiosInstance.patch(`/api/mechanic/appointments/${id}/update-status/`, {
+				status: newStatus,
+			});
+			setAppointments((prev) =>
+				prev.map((a) => (a.id === id ? { ...a, status: newStatus } : a))
+			);
+		} catch (e) {
+			alert("Nie udało się zmienić statusu.");
+		}
 	};
 
-	const filterByStatus = (status: Appointment["status"]) =>
-		appointments.filter((a) => a.status === status);
+	const grouped = {
+		confirmed: appointments.filter((a) => a.status === "confirmed"),
+		pending: appointments.filter((a) => a.status === "pending"),
+		cancelled: appointments.filter((a) => a.status === "cancelled"),
+		completed: appointments.filter((a) => a.status === "completed"),
+	};
 
 	if (loading) return <div className="p-6">Ładowanie wizyt...</div>;
 
 	return (
-		<div className="p-6 max-w-3xl mx-auto">
+		<div className="p-6 max-w-4xl mx-auto">
 			<h1 className="text-2xl font-bold mb-6">Wizyty klientów</h1>
 
-			<section className="mb-8">
-				<h2 className="text-xl font-semibold mb-3">Potwierdzone</h2>
-				{filterByStatus("confirmed").map((a) => (
-					<AppointmentCard
-						key={a.id}
-						appointment={a}
-						onStatusChange={handleStatusChange}
-					/>
-				))}
-			</section>
+			{(["pending", "confirmed", "completed", "cancelled"] as Appointment["status"][]).map(
+				(status) => (
+					<section className="mb-6" key={status}>
+						<h2 className="text-xl font-semibold mb-2 capitalize">
+							{status === "pending" && "Oczekujące"}
+							{status === "confirmed" && "Potwierdzone"}
+							{status === "completed" && "Zakończone"}
+							{status === "cancelled" && "Odwołane"}
+						</h2>
 
-			<section className="mb-8">
-				<h2 className="text-xl font-semibold mb-3">Oczekujące</h2>
-				{filterByStatus("pending").map((a) => (
-					<AppointmentCard
-						key={a.id}
-						appointment={a}
-						onStatusChange={handleStatusChange}
-					/>
-				))}
-			</section>
-
-			<section className="mb-8">
-				<h2 className="text-xl font-semibold mb-3">Odwołane</h2>
-				{filterByStatus("cancelled").map((a) => (
-					<AppointmentCard
-						key={a.id}
-						appointment={a}
-						onStatusChange={handleStatusChange}
-					/>
-				))}
-			</section>
+						{grouped[status].length > 0 ? (
+							grouped[status].map((a) => (
+								<AppointmentCard
+									key={a.id}
+									appointment={a}
+									onStatusChange={handleStatusChange}
+								/>
+							))
+						) : (
+							<p className="text-gray-500">Brak wizyt.</p>
+						)}
+					</section>
+				)
+			)}
 		</div>
 	);
 };
 
-export default MechanicAppointments;
+export default MechanicAppointmentsPage;
