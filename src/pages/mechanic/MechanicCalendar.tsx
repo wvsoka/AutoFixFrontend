@@ -4,7 +4,7 @@ import { format, parse, startOfWeek, getDay } from "date-fns";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import axiosInstance from "../../api/axiosInstance";
 import { pl } from "date-fns/locale";
-
+import { useNavigate } from "react-router-dom";
 
 interface CalendarExtendedEvent extends CalendarEvent {
   	id: string;
@@ -97,6 +97,8 @@ export const MechanicCalendar = () => {
   	const [view, setView] = useState<View>(Views.WEEK);
 	const [currentDate, setCurrentDate] = useState(new Date());
 	const [backgroundEvents, setBackgroundEvents] = useState<CalendarExtendedEvent[]>([]);
+
+	const navigate = useNavigate();
 
   	useEffect(() => {
     	const fetchData = async () => {
@@ -230,7 +232,14 @@ export const MechanicCalendar = () => {
 
   	return (
     	<div className="p-4">
-      		<h2 className="text-2xl font-semibold mb-4">Kalendarz mechanika</h2>
+      		<div className="flex justify-between items-center mb-4">
+  				<h2 className="text-2xl font-semibold">Kalendarz mechanika</h2>
+  				<button
+    				onClick={() => navigate("/mechanic/appointments")}
+    				className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+  				>Zarządzaj wizytami
+  				</button>
+			</div>
 
       		<Calendar
         		localizer={localizer}
