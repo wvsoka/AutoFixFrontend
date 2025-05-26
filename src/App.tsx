@@ -1,21 +1,21 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { PublicLayout } from "./layouts/PublicLayout";
+import { MechanicPrivateLayout } from "./layouts/MechanicPrivateLayout";
 import { HomePage } from "./pages/public/HomePage";
 import { RegisterClientPage } from "./pages/public/RegisterClientPage";
 import { RegisterMechanicPage } from "./pages/public/RegisterMechanicPage";
-import {LoginPage} from "./pages/public/LoginPage";
-import {MechanicProfilePage} from "./pages/mechanic/MechanicProfilePage";
-import {MechanicPrivateLayout} from "./layouts/MechanicPrivateLayout";
+import { LoginPage } from "./pages/public/LoginPage";
 import ListOfMechanics from "./pages/client/ListOfMechanics";
 import WorkshopPage from "./pages/client/WorkshopPage";
-import { MechanicMyServicesPage } from "./pages/mechanic/MechanicMyServicesPage";
+import AppointmentsPage from "./pages/client/AppointmentsPage";
 import { SettingsPage } from "./pages/client/SettingsPage";
 import MyOpinionsPage from "./pages/client/MyOpinionsPage";
+import { MechanicProfilePage } from "./pages/mechanic/MechanicProfilePage";
 import { MechanicReviewsPage } from "./pages/mechanic/MechanicMyReviewsPage";
 import { MechanicCalendar } from "./pages/mechanic/MechanicCalendar";
-import AppointmentsPage from "./pages/client/AppointmentsPage";
 import { MechanicSettings } from "./pages/mechanic/MechanicSettings";
 import MechanicAppointments from "./pages/mechanic/MechanicAppointments";
+import { MechanicMyServicesPage } from "./pages/mechanic/MechanicMyServicesPage";
 
 function App() {
     return (
