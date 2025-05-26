@@ -14,7 +14,8 @@ import MyOpinionsPage from "./pages/client/MyOpinionsPage";
 import { MechanicReviewsPage } from "./pages/mechanic/MechanicMyReviewsPage";
 import { MechanicCalendar } from "./pages/mechanic/MechanicCalendar";
 import AppointmentsPage from "./pages/client/AppointmentsPage";
-import {MechanicSettings} from "./pages/mechanic/MechanicSettings";
+import { MechanicSettings } from "./pages/mechanic/MechanicSettings";
+import MechanicAppointments from "./pages/mechanic/MechanicAppointments";
 
 function App() {
     return (
@@ -32,6 +33,7 @@ function App() {
                     <Route path="/mechanic/reviews" element={<MechanicReviewsPage />}/>
                     <Route path="/mechanic/calendar" element={<MechanicCalendar />} />
                     <Route path="/mechanic/settings" element={<MechanicSettings/>} />
+                    <Route path="/mechanic/appointments" element={<MechanicAppointments/>} />
                 </Route>
                 <Route path="/services" element={<ListOfMechanics />} />
                 <Route path="/workshop/:id" element={<WorkshopPage />} />
