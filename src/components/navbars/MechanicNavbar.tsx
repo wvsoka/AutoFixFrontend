@@ -84,7 +84,41 @@ export const MechanicNavbar = () => {
 
             {mobileMenuOpen && (
                 <div className="flex flex-col mt-4 gap-2 md:hidden">
-                    {/* ... reszta kodu ... */}
+                    <Link
+                        to="/mechanic/calendar"
+                        className="px-4 py-2 hover:bg-[#2f6691] rounded"
+                        onClick={() => setMobileMenuOpen(false)}
+                    >
+                        Mój kalendarz
+                    </Link>
+                    <Link
+                        to="/mechanic/myservices"
+                        className="px-4 py-2 hover:bg-[#2f6691] rounded"
+                        onClick={() => setMobileMenuOpen(false)}
+                    >
+                        Moje usługi
+                    </Link>
+                    <Link
+                        to="/mechanic/profile"
+                        className="px-4 py-2 hover:bg-[#2f6691] rounded"
+                        onClick={() => setMobileMenuOpen(false)}
+                    >
+                        Dane firmy
+                    </Link>
+                    <Link
+                        to="/mechanic/settings"
+                        className="px-4 py-2 hover:bg-[#2f6691] rounded"
+                        onClick={() => setMobileMenuOpen(false)}
+                    >
+                        Ustawienia konta
+                    </Link>
+                    <Link
+                        to="/mechanic/reviews"
+                        className="px-4 py-2 hover:bg-[#2f6691] rounded"
+                        onClick={() => setMobileMenuOpen(false)}
+                    >
+                        Moje opinie
+                    </Link>
                 </div>
             )}
         </nav>
