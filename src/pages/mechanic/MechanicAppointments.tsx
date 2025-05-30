@@ -8,10 +8,10 @@ interface Appointment {
 	id: number;
 	client_user: {
 		id: number;
-        email: string;
+		email: string;
 		name: string;
 		surname: string;
-        phone: string;
+		phone: string;
 	};
 	service: {
 		id: number;
@@ -21,63 +21,12 @@ interface Appointment {
 	status: "pending" | "confirmed" | "cancelled" | "completed";
 }
 
-const demoAppointments: Appointment[] = [
-	{
-		id: 1,
-		date: "2025-05-21T10:00:00",
-		status: "pending",
-		client_user: {
-			id: 1,
-			email: "jan.kowalski@example.com",
-			name: "Jan",
-			surname: "Kowalski",
-			phone: "123456789",
-		},
-		service: {
-			id: 101,
-			name: "Wymiana oleju",
-		},
-	},
-	{
-		id: 2,
-		date: "2025-05-22T14:00:00",
-		status: "confirmed",
-		client_user: {
-			id: 2,
-			email: "anna.nowak@example.com",
-			name: "Anna",
-			surname: "Nowak",
-			phone: "987654321",
-		},
-		service: {
-			id: 102,
-			name: "Serwis klimatyzacji",
-		},
-	},
-	{
-		id: 3,
-		date: "2025-05-19T09:00:00",
-		status: "cancelled",
-		client_user: {
-			id: 3,
-			email: "piotr.w@example.com",
-			name: "Piotr",
-			surname: "Wiśniewski",
-			phone: "555666777",
-		},
-		service: {
-			id: 103,
-			name: "Diagnostyka komputerowa",
-		},
-	},
-];
-
 const AppointmentCard = ({
-	appointment,
-	onStatusChange,
-}: {
+							 appointment,
+							 onStatusClick,
+						 }: {
 	appointment: Appointment;
-	onStatusChange: (id: number, status: Appointment["status"]) => void;
+	onStatusClick: (appointment: Appointment, status: Appointment["status"]) => void;
 }) => {
 	const parsedDate = dayjs(appointment.date);
 	const formattedDate = parsedDate.format("D MMMM YYYY, HH:mm");
@@ -88,10 +37,11 @@ const AppointmentCard = ({
 				<div>
 					<h3 className="font-semibold text-lg">
 						{appointment.service.name}
-                        <br/ >{formattedDate}
+						<br />
+						{formattedDate}
 					</h3>
 					<p className="text-sm text-gray-600">
-                        {appointment.client_user.name} {appointment.client_user.surname}
+						{appointment.client_user.name} {appointment.client_user.surname}
 					</p>
 					<p className="text-sm text-gray-500">
 						Tel: {appointment.client_user.phone}
@@ -102,13 +52,13 @@ const AppointmentCard = ({
 					<div className="flex gap-2">
 						<button
 							className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600"
-							onClick={() => onStatusChange(appointment.id, "confirmed")}
+							onClick={() => onStatusClick(appointment, "confirmed")}
 						>
 							Potwierdź
 						</button>
 						<button
 							className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
-							onClick={() => onStatusChange(appointment.id, "cancelled")}
+							onClick={() => onStatusClick(appointment, "cancelled")}
 						>
 							Odwołaj
 						</button>
@@ -117,20 +67,20 @@ const AppointmentCard = ({
 
 				{appointment.status === "confirmed" && (
 					<span className="px-3 py-1 bg-blue-100 text-blue-700 rounded text-sm">
-						Potwierdzona
-					</span>
+                        Potwierdzona
+                    </span>
 				)}
 
 				{appointment.status === "cancelled" && (
 					<span className="px-3 py-1 bg-gray-200 text-gray-600 rounded text-sm">
-						Odwołana
-					</span>
+                        Odwołana
+                    </span>
 				)}
 
 				{appointment.status === "completed" && (
 					<span className="px-3 py-1 bg-green-100 text-green-700 rounded text-sm">
-						Zakończona
-					</span>
+                        Zakończona
+                    </span>
 				)}
 			</div>
 		</div>
@@ -140,15 +90,21 @@ const AppointmentCard = ({
 const MechanicAppointmentsPage = () => {
 	const [appointments, setAppointments] = useState<Appointment[]>([]);
 	const [loading, setLoading] = useState(true);
+	const [confirmDialog, setConfirmDialog] = useState<{
+		open: boolean;
+		appointment: Appointment | null;
+		status: Appointment["status"] | null;
+	}>({ open: false, appointment: null, status: null });
 
 	useEffect(() => {
 		const fetchAppointments = async () => {
 			try {
 				const res = await axiosInstance.get("/api/mechanic/appointments/");
-				setAppointments([...res.data, ...demoAppointments]);
+				console.log("API appointments:", res.data);
+				setAppointments(res.data);
 			} catch (err) {
 				console.error("Błąd ładowania wizyt:", err);
-				setAppointments(demoAppointments); // fallback
+				setAppointments([]);
 			} finally {
 				setLoading(false);
 			}
@@ -167,6 +123,23 @@ const MechanicAppointmentsPage = () => {
 		} catch (e) {
 			alert("Nie udało się zmienić statusu.");
 		}
+	};
+
+	// Wywołaj dialog
+	const handleStatusClick = (appointment: Appointment, status: Appointment["status"]) => {
+		setConfirmDialog({
+			open: true,
+			appointment,
+			status,
+		});
+	};
+
+	// Potwierdź lub anuluj w oknie dialogowym
+	const handleConfirm = async () => {
+		if (confirmDialog.appointment && confirmDialog.status) {
+			await handleStatusChange(confirmDialog.appointment.id, confirmDialog.status);
+		}
+		setConfirmDialog({ open: false, appointment: null, status: null });
 	};
 
 	const grouped = {
@@ -197,7 +170,7 @@ const MechanicAppointmentsPage = () => {
 								<AppointmentCard
 									key={a.id}
 									appointment={a}
-									onStatusChange={handleStatusChange}
+									onStatusClick={handleStatusClick}
 								/>
 							))
 						) : (
@@ -205,6 +178,43 @@ const MechanicAppointmentsPage = () => {
 						)}
 					</section>
 				)
+			)}
+
+			{/* MODAL Z POTWIERDZENIEM */}
+			{confirmDialog.open && confirmDialog.appointment && (
+				<div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+					<div className="bg-white rounded shadow-lg p-6 max-w-md w-full">
+						<h2 className="text-xl font-bold mb-4">Potwierdzenie akcji</h2>
+						<p className="mb-4">
+							Czy na pewno chcesz&nbsp;
+							{confirmDialog.status === "confirmed" && (
+								<>potwierdzić wizytę "{confirmDialog.appointment.service.name}" dla {confirmDialog.appointment.client_user.name} {confirmDialog.appointment.client_user.surname} w dniu {dayjs(confirmDialog.appointment.date).format("D MMMM YYYY, HH:mm")}?</>
+							)}
+							{confirmDialog.status === "cancelled" && (
+								<>odwołać wizytę "{confirmDialog.appointment.service.name}" dla {confirmDialog.appointment.client_user.name} {confirmDialog.appointment.client_user.surname} w dniu {dayjs(confirmDialog.appointment.date).format("D MMMM YYYY, HH:mm")}?</>
+							)}
+						</p>
+						<div className="flex justify-end gap-2">
+							<button
+								className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+								onClick={() =>
+									setConfirmDialog({ open: false, appointment: null, status: null })
+								}
+							>
+								Anuluj
+							</button>
+							<button
+								className={`px-4 py-2 rounded text-white ${confirmDialog.status === "confirmed"
+									? "bg-green-600 hover:bg-green-700"
+									: "bg-red-600 hover:bg-red-700"
+								}`}
+								onClick={handleConfirm}
+							>
+								Tak, {confirmDialog.status === "confirmed" ? "potwierdź" : "odwołaj"}
+							</button>
+						</div>
+					</div>
+				</div>
 			)}
 		</div>
 	);
