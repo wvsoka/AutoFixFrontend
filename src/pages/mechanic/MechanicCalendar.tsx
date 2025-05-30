@@ -5,6 +5,7 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import axiosInstance from "../../api/axiosInstance";
 import { pl } from "date-fns/locale";
 import { useNavigate } from "react-router-dom";
+import {SecondaryButton} from "../../components/buttons/SecondaryButton";
 
 interface CalendarExtendedEvent extends CalendarEvent {
   	id: string;
@@ -234,11 +235,10 @@ export const MechanicCalendar = () => {
     	<div className="p-4">
       		<div className="flex justify-between items-center mb-4">
   				<h2 className="text-2xl font-semibold">Kalendarz mechanika</h2>
-  				<button
+  				<SecondaryButton
     				onClick={() => navigate("/mechanic/appointments")}
-    				className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
   				>Zarządzaj wizytami
-  				</button>
+  				</SecondaryButton>
 			</div>
 
       		<Calendar

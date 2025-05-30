@@ -5,7 +5,15 @@ import { SecondaryButton } from "../../components/buttons/SecondaryButton";
 import { MechanicSidebar } from "../../components/sidebars/MechanicSidebar";
 import { FiMapPin, FiPhone, FiClock, FiHome, FiInfo } from "react-icons/fi";
 
-const days = ["poniedziałek", "wtorek", "środa", "czwartek", "piątek", "sobota", "niedziela"];
+const days = [
+    "poniedziałek",
+    "wtorek",
+    "środa",
+    "czwartek",
+    "piątek",
+    "sobota",
+    "niedziela",
+];
 
 export const MechanicProfilePage: React.FC = () => {
     const [formData, setFormData] = useState({
@@ -13,12 +21,12 @@ export const MechanicProfilePage: React.FC = () => {
         address: "",
         city: "",
         zip_code: "",
-        phone: "",
+        contact_phone: "",
         description: "",
         opening_hours: days.reduce((acc, day) => {
-            acc[day] = { open: "", close: "", id: null };
+            acc[day] = { open: "", close: "", id: null, closed: false };
             return acc;
-        }, {} as Record<string, { open: string; close: string; id: number | null }>),
+        }, {} as Record<string, { open: string; close: string; id: number | null; closed: boolean }>),
     });
     const [mechanicInfo, setMechanicInfo] = useState({ full_name: "", email: "" });
     const [success, setSuccess] = useState("");
@@ -52,12 +60,20 @@ export const MechanicProfilePage: React.FC = () => {
                             open: entry.open_time.slice(0, 5),
                             close: entry.close_time.slice(0, 5),
                             id: entry.id,
+                            closed: false, // jeśli godzinę mamy, to otwarte
                         };
                     }
                 });
+                // domyślnie jeśli nie ma godzin, zamknięte
+                for (const day of days) {
+                    if (!updatedHours[day].open && !updatedHours[day].close) {
+                        updatedHours[day].closed = true;
+                    }
+                }
                 setFormData(prev => ({ ...prev, opening_hours: updatedHours }));
             })
             .catch(() => setError("Nie udało się załadować godzin otwarcia."));
+        // eslint-disable-next-line
     }, []);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -74,6 +90,20 @@ export const MechanicProfilePage: React.FC = () => {
         }));
     };
 
+    const handleClosedChange = (day: string, checked: boolean) => {
+        setFormData(prev => ({
+            ...prev,
+            opening_hours: {
+                ...prev.opening_hours,
+                [day]: {
+                    ...prev.opening_hours[day],
+                    closed: checked,
+                    ...(checked ? { open: "", close: "" } : {}), // wyczyść godziny jeśli zamknięte
+                },
+            },
+        }));
+    };
+
     const dayMap: Record<string, string> = {
         poniedziałek: "monday",
         wtorek: "tuesday",
@@ -86,24 +116,28 @@ export const MechanicProfilePage: React.FC = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (formData.description.length > 255) {
+            setError("Opis nie może być dłuższy niż 255 znaków.");
+            return;
+        }
         try {
             await axiosInstance.patch("/api/mechanic/me/", {
                 name: formData.name,
                 address: formData.address,
                 city: formData.city,
                 zip_code: formData.zip_code,
-                phone: formData.phone,
+                contact_phone: formData.contact_phone,
                 description: formData.description,
             });
             const promises = days.map(day => {
                 const hour = formData.opening_hours[day];
+                if (hour.closed) return Promise.resolve(); // nie wysyłaj zamkniętych dni!
                 if (!hour.open || !hour.close) return Promise.resolve();
                 const payload = {
                     day_of_the_week: dayMap[day],
                     open_time: `${hour.open}:00`,
                     close_time: `${hour.close}:00`,
                 };
-
                 return hour.id
                     ? axiosInstance.patch(`/api/mechanic/working-hours/${hour.id}/`, payload)
                     : axiosInstance.post("/api/mechanic/working-hours/", payload);
@@ -117,7 +151,7 @@ export const MechanicProfilePage: React.FC = () => {
 
     return (
         <div className="flex flex-col-reverse lg:flex-row-reverse min-h-screen bg-white">
-            <MechanicSidebar  />
+            <MechanicSidebar />
             <main className="flex-1 px-6 py-10">
                 <h1 className="text-3xl font-bold text-zinc-800 mb-6">Witaj, {mechanicInfo.full_name || "Mechaniku"}!</h1>
                 <h2 className="text-2xl font-semibold text-zinc-700 mb-4">Dane warsztatu</h2>
@@ -131,14 +165,14 @@ export const MechanicProfilePage: React.FC = () => {
                     </div>
                     <div>
                         <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-1"><FiPhone /> Numer kontaktowy</label>
-                        <InputField name="phone" value={formData.phone} onChange={handleChange} required placeholder="+48 123 456 789" />
+                        <InputField name="contact_phone" value={formData.contact_phone} onChange={handleChange} required placeholder="+48 123 456 789" />
                     </div>
                     <div>
                         <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-1"><FiMapPin /> Ulica i numer</label>
                         <InputField name="address" value={formData.address} onChange={handleChange} required placeholder="ul. Mechaników 12A" />
                     </div>
                     <div>
-                        <label className="text-sm font-medium text-gray-700 mb-1">Miasto</label>
+                        <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-1"><FiMapPin /> Miasto</label>
                         <InputField name="city" value={formData.city} onChange={handleChange} required placeholder="Warszawa" />
                     </div>
                     <div className="sm:col-span-2">
@@ -149,19 +183,33 @@ export const MechanicProfilePage: React.FC = () => {
                             onChange={handleChange}
                             placeholder="Opisz czym się zajmuje Twój warsztat..."
                             className="w-full p-3 border border-gray-300 rounded-md resize-none h-28 text-sm"
+                            maxLength={255}
                         />
+                        <div className="text-xs text-gray-500 mt-1 text-right">
+                            {formData.description.length}/255 znaków
+                        </div>
                     </div>
+
                     <div className="sm:col-span-2">
                         <h3 className="text-lg font-semibold text-zinc-800 mb-2 flex items-center gap-2"><FiClock /> Godziny otwarcia</h3>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             {days.map(day => (
                                 <div key={day} className="flex flex-col sm:flex-row sm:items-center gap-2">
                                     <span className="w-full sm:w-28 capitalize font-medium text-sm text-gray-700">{day}</span>
+                                    <label className="flex items-center gap-1 text-xs text-gray-600">
+                                        <input
+                                            type="checkbox"
+                                            checked={formData.opening_hours[day]?.closed || false}
+                                            onChange={e => handleClosedChange(day, e.target.checked)}
+                                        />
+                                        zamknięte
+                                    </label>
                                     <input
                                         type="time"
                                         value={formData.opening_hours[day]?.open || "00:00"}
                                         onChange={e => handleHourChange(day, "open", e.target.value)}
                                         className="border rounded px-3 py-1 text-sm w-full sm:w-auto"
+                                        disabled={formData.opening_hours[day]?.closed}
                                     />
                                     <span className="hidden sm:inline">–</span>
                                     <input
@@ -169,6 +217,7 @@ export const MechanicProfilePage: React.FC = () => {
                                         value={formData.opening_hours[day]?.close || "00:00"}
                                         onChange={e => handleHourChange(day, "close", e.target.value)}
                                         className="border rounded px-3 py-1 text-sm w-full sm:w-auto"
+                                        disabled={formData.opening_hours[day]?.closed}
                                     />
                                 </div>
                             ))}
