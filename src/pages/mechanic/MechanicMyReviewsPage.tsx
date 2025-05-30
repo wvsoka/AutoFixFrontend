@@ -87,7 +87,7 @@ export const MechanicReviewsPage = () => {
         <div className="flex flex-col-reverse lg:flex-row-reverse min-h-screen bg-white">
             <MechanicSidebar />
             <main className="flex-1 px-6 py-10">
-                <h2 className="text-3xl font-bold text-zinc-800 mb-8">Opinie o Twoim warsztacie</h2>
+                <h2 className="text-3xl font-bold text-zinc-800 mb-6">Opinie o Twoim warsztacie</h2>
 
                 {averageRating !== null && (
                     <div className="bg-zinc-50 rounded-xl p-6 mb-10 text-center">

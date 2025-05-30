@@ -87,10 +87,6 @@ export const LoginPage = () => {
                             icon={<FiIcons.FiLock />}
                         />
 
-                        <div className="flex justify-end text-sm text-blue-600 hover:underline">
-                            <a href="#">Zapomniałeś hasła?</a>
-                        </div>
-
                         <div className="flex justify-center mt-4">
                             <SecondaryButton type="submit" className="w-full max-w-sm">
                                 Zaloguj się

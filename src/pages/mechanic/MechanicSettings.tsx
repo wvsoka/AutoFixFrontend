@@ -60,9 +60,19 @@ export const MechanicSettings = () => {
                 });
             }
         } catch (error: any) {
-            const detail = error.response?.data?.old_password || error.response?.data?.new_password || "Wystąpił błąd.";
-            setErrorMessage(typeof detail === "string" ? detail : "Nie udało się zmienić hasła.");
+            let detail =
+                error.response?.data?.old_password ||
+                error.response?.data?.new_password ||
+                error.response?.data?.detail ||
+                "Wystąpił błąd.";
+
+            if (Array.isArray(detail)) {
+                setErrorMessage(detail.join(" "));
+            } else {
+                setErrorMessage(detail);
+            }
         }
+
     };
 
     const handleDeleteAccount = () => {
@@ -74,7 +84,7 @@ export const MechanicSettings = () => {
         <div className="flex flex-col-reverse lg:flex-row-reverse min-h-screen bg-white">
             <MechanicSidebar />
             <main className="flex-1 px-6 py-10">
-                <h2 className="text-2xl font-bold text-[#1D3557] mb-6">Ustawienia konta</h2>
+                <h2 className="text-3xl font-bold text-zinc-800 mb-6">Ustawienia konta</h2>
 
                 <form onSubmit={handleSubmit} className="bg-white border border-gray-200 p-6 rounded-lg shadow-sm space-y-4 max-w-2xl mx-auto">
                     <h3 className="text-lg font-semibold text-[#1D3557]">Zmień hasło</h3>

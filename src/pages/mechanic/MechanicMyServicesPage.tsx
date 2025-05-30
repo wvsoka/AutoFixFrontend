@@ -15,6 +15,7 @@ export const MechanicMyServicesPage = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [isEditing, setIsEditing] = useState(false);
+    const durations = Array.from({ length: 10 }, (_, i) => (i + 1) * 30);
     const [selectedService, setSelectedService] = useState<Service | null>(null);
     const [formData, setFormData] = useState({
         name: "",
@@ -226,12 +227,16 @@ export const MechanicMyServicesPage = () => {
                                     className="w-full border px-3 py-2 rounded"
                                 >
                                     <option value="">Wybierz czas</option>
-                                    <option value="30">30 minut</option>
-                                    <option value="60">1 godzina</option>
-                                    <option value="90">1,5 godziny</option>
-                                    <option value="120">2 godziny</option>
+                                    {durations.map(min => (
+                                        <option key={min} value={min}>
+                                            {min < 60
+                                                ? `${min} minut`
+                                                : `${Math.floor(min / 60)} godz.${min % 60 ? ` ${min % 60} min` : ""}`}
+                                        </option>
+                                    ))}
                                 </select>
                                 {formErrors.duration && <p className="text-red-600 text-sm mt-1">{formErrors.duration}</p>}
+
                             </div>
                         </div>
                         <div className="mt-6 flex justify-end gap-4">
