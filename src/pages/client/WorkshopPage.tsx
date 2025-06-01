@@ -9,6 +9,12 @@ import BookingModal from "./BookingModal";
 import { useLocation, useParams } from "react-router-dom";
 import axiosInstance from '../../api/axiosInstance';
 
+interface WorkingHour {
+    day_of_the_week: string;
+    open_time: string;
+    close_time: string;
+}
+
 const WorkshopPage: React.FC = () => {
     const [bookingOpen, setBookingOpen] = useState(false);
     const [selectedService, setSelectedService] = useState<string>("");
@@ -21,6 +27,8 @@ const WorkshopPage: React.FC = () => {
     const [serviceId, setServiceId] = useState<number>(0);
     // const accessToken = localStorage.getItem("accessToken");
     // console.log("Access Token:", accessToken);
+    const [workingHours, setWorkingHours] = useState<WorkingHour[]>([]);
+
     const handleBookClick = (serviceName: string, serviceId: number) => {
         setSelectedService(serviceName);
         setBookingOpen(true);
@@ -47,6 +55,9 @@ const WorkshopPage: React.FC = () => {
                 const ratingRes = await axiosInstance.get(`/api/reviews/mechanic/${mechanicId}/rating/`);
                 setAverageRating(ratingRes.data.average_rating);
 
+                const workingHoursRes = await axiosInstance.get(`/api/mechanics/${mechanicId}/working-hours/`);
+                setWorkingHours(workingHoursRes.data);
+
             } catch (err) {
                 console.error("Błąd przy pobieraniu danych:", err);
             }
@@ -55,6 +66,38 @@ const WorkshopPage: React.FC = () => {
         fetchAllData();
     }, [id, mechanic]);
 
+    const allDays = [
+        "monday",
+        "tuesday",
+        "wednesday",
+        "thursday",
+        "friday",
+        "saturday",
+        "sunday"
+    ];
+
+
+    const translateDay = (day: string) => {
+        const daysMap: Record<string, string> = {
+            monday: "Poniedziałek",
+            tuesday: "Wtorek",
+            wednesday: "Środa",
+            thursday: "Czwartek",
+            friday: "Piątek",
+            saturday: "Sobota",
+            sunday: "Niedziela"
+        };
+        return daysMap[day.toLowerCase()] || day;
+    };
+    const weekdayOrder: Record<string, number> = {
+        monday: 0,
+        tuesday: 1,
+        wednesday: 2,
+        thursday: 3,
+        friday: 4,
+        saturday: 5,
+        sunday: 6
+    };
 
     return (
         <div className="workshop-page">
@@ -81,7 +124,26 @@ const WorkshopPage: React.FC = () => {
                         <WorkshopDetailsCard
                             name={mechanic.name}
                             description={mechanic.description}
-                            openingHours={[] /* tutaj możesz wstawić dane jeśli masz */}
+                            openingHours={
+                                allDays.map((day) => {
+                                    const entry = workingHours.find((w: any) => w.day_of_the_week === day);
+                                    if (entry) {
+                                        return {
+                                            dayOfWeek: day,
+                                            day: translateDay(day),
+                                            hours: `${entry.open_time.slice(0, 5)} - ${entry.close_time.slice(0, 5)}`,
+                                            isClosed: entry.open_time === entry.close_time
+                                        };
+                                    } else {
+                                        return {
+                                            dayOfWeek: day,
+                                            day: translateDay(day),
+                                            hours: "Zamknięte",
+                                            isClosed: true
+                                        };
+                                    }
+                                }).sort((a, b) => weekdayOrder[a.dayOfWeek] - weekdayOrder[b.dayOfWeek])
+                            }
                         />
                     )}
                 </div>
