@@ -44,27 +44,6 @@ const BookingModal: React.FC<{ onClose: () => void; serviceName: string; service
         fetchAvailability();
     }, [startDate, serviceId]);
 
-    useEffect(() => {
-        const fetchAvailability = async () => {
-            if (!serviceId) return;
-            const newAvailability: Record<string, string[]> = {};
-
-            for (const date of visibleDates) {
-                const formatted = formatDate(date);
-                try {
-                    const res = await axiosInstance.get(`/api/client/available-timeslots/${serviceId}/${formatted}/`);
-                    newAvailability[formatted] = res.data.available_slots;
-                } catch (e) {
-                    newAvailability[formatted] = [];
-                }
-            }
-
-            setAvailability(newAvailability);
-        };
-
-        fetchAvailability();
-    }, [startDate, serviceId]);
-
     const visibleDates = Array.from({ length: 7 }, (_, i) => {
         const date = new Date(startDate);
         date.setDate(date.getDate() + i);
@@ -90,13 +69,13 @@ const BookingModal: React.FC<{ onClose: () => void; serviceName: string; service
             try {
                 await axiosInstance.post("/api/client/appointments/", {
                     service: serviceId,
-                    date: selected.date,
-                    time: selected.time
+                    date: selected.time  // pełny datetime: "2025-05-30T06:30:00"
                 });
 
                 setBookingStatus(`Udało Ci się zarezerwować usługę "${serviceName}" dnia ${selected.date} o godzinie ${selected.time}.`);
                 setTimeout(() => onClose(), 3000);
-            } catch (e) {
+            } catch (e: any) {
+                console.error("Błąd rezerwacji:", e.response?.data || e.message);
                 setBookingStatus("Nie udało się dokonać rezerwacji. Proszę spróbować ponownie.");
             }
         }
