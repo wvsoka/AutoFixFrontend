@@ -60,14 +60,6 @@ const AppointmentCard = ({ appointment }: { appointment: Appointment }) => {
     const [comment, setComment] = useState('');
 
     const handleSubmit = async () => {
-        console.log("Wysyłam:", {
-            data: {
-                note: rating,
-                content: comment,
-            },
-            service_id: appointment.service.id
-        });
-
         try {
             await axiosInstance.post(`/api/reviews/service/${appointment.service.id}/reviews/`, {
                 note: rating,
