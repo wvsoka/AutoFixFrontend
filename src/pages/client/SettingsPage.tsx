@@ -109,6 +109,11 @@ export const SettingsPage = () => {
         }
 
         try {
+            console.log({
+                old_password: formData.oldPassword,
+                new_password: formData.newPassword,
+            });
+
             const response = await fetch("http://localhost:8000/api/auth/password/change/", {
                 method: "POST",
                 headers: {
@@ -125,7 +130,14 @@ export const SettingsPage = () => {
                 setSuccessMessage("Hasło zostało zmienione.");
             } else {
                 const errorData = await response.json();
-                setErrorMessage(errorData.old_password || "Błąd przy zmianie hasła.");
+
+                if (errorData.old_password) {
+                    setErrorMessage(errorData.old_password[0] || "Błąd przy zmianie hasła.");
+                } else if (errorData.new_password) {
+                    setErrorMessage(errorData.new_password[0] || "Błąd przy zmianie hasła.");
+                } else {
+                    setErrorMessage("Błąd przy zmianie hasła.");
+                }
             }
         } catch (error) {
             setErrorMessage("Błąd połączenia z serwerem.");
