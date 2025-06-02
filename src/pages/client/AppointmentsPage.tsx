@@ -179,10 +179,21 @@ const AppointmentsPage = () => {
     useEffect(() => {
         axiosInstance
         .get<Appointment[]>("/api/client/appointments/list/")
-        .then((res) => {
-            const merged = [...res.data, ...demoAppointments];  // add mocked data for now
-            setAppointments(merged)
-        })
+            .then((res) => {
+                const mapped = res.data.map((item: any) => ({
+                    id: item.id,
+                    mechanic: item.service?.mechanic?.name ?? "Nieznany",
+                    service: {
+                        id: item.service?.id ?? 0,
+                    },
+                    service_name: item.service?.name ?? "Nieznana usługa",
+                    date: item.date,
+                    status: item.status,
+                }));
+
+                const merged = [...mapped, ...demoAppointments];
+                setAppointments(merged);
+            })
         .catch((err) => console.error("Błąd podczas pobierania danych:", err))
         .finally(() => setLoading(false));
     }, []);
