@@ -186,7 +186,7 @@ export const MechanicProfilePage: React.FC = () => {
                             maxLength={255}
                         />
                         <div className="text-xs text-gray-500 mt-1 text-right">
-                            {formData.description.length}/255 znaków
+                            {formData.description?.length || 0}/255 znaków
                         </div>
                     </div>
 
