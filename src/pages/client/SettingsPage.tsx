@@ -1,17 +1,49 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import "./SettingsPage.css";
 import ClientNavbar from "../../components/navbars/ClientNavbar";
 
 export const SettingsPage = () => {
     const [formData, setFormData] = useState({
-        first_name: "Jan",
-        last_name: "Kowalski",
-        email: "jan.kowalski@example.com",
-        phone: "123456789",
-        password: "",
-        newPassword:"",
+        first_name: "",
+        last_name: "",
+        email: "",
+        phone: "",
+        oldPassword: "",
+        newPassword: "",
         confirmPassword: "",
     });
+
+
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const response = await fetch("http://localhost:8000/api/auth/me/", {
+                    method: "GET",
+                    headers: {
+                        "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
+                    },
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log("Pobrane dane użytkownika:", data); // Dodaj to logowanie
+                    setFormData((prev) => ({
+                        ...prev,
+                        first_name: data.name || "",
+                        last_name: data.surname || "",
+                        email: data.email || "",
+                        phone: data.phone || "",
+                    }));
+                } else {
+                    setErrorMessage("Nie udało się pobrać danych użytkownika.");
+                }
+            } catch (error) {
+                setErrorMessage("Błąd połączenia z serwerem.");
+            }
+        };
+
+        fetchUserData();
+    }, []);
 
     const [successMessage, setSuccessMessage] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
@@ -26,7 +58,7 @@ export const SettingsPage = () => {
         setSuccessMessage("");
         setErrorMessage("");
 
-        if (formData.password && formData.password !== formData.confirmPassword) {
+        if (formData.oldPassword && formData.newPassword !== formData.confirmPassword) {
             setErrorMessage("Hasła nie są takie same.");
             return;
         }
@@ -34,13 +66,83 @@ export const SettingsPage = () => {
         setSuccessMessage("Dane zostały zapisane (mock)!");
     };
 
+    const handleProfileUpdate = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setSuccessMessage("");
+        setErrorMessage("");
+
+        try {
+            const response = await fetch("http://localhost:8000/api/auth/profile/update/", {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+                },
+                body: JSON.stringify({
+                    name: formData.first_name,
+                    surname: formData.last_name,
+                    email: formData.email,
+                    phone: formData.phone,
+                }),
+            });
+
+            if (response.ok) {
+                setSuccessMessage("Dane zostały zapisane.");
+            } else {
+                const errorData = await response.json();
+                setErrorMessage(errorData.message || "Błąd podczas zapisu danych.");
+            }
+        } catch (error) {
+            setErrorMessage("Błąd połączenia z serwerem.");
+        }
+    };
+
+
+    const handleChangePassword = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setSuccessMessage("");
+        setErrorMessage("");
+
+        if (formData.newPassword !== formData.confirmPassword) {
+            setErrorMessage("Nowe hasła nie są zgodne.");
+            return;
+        }
+
+        try {
+            const response = await fetch("http://localhost:8000/api/auth/password/change/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+                },
+                body: JSON.stringify({
+                    old_password: formData.oldPassword,
+                    new_password: formData.newPassword,
+                }),
+            });
+
+            if (response.ok) {
+                setSuccessMessage("Hasło zostało zmienione.");
+            } else {
+                const errorData = await response.json();
+                setErrorMessage(errorData.old_password || "Błąd przy zmianie hasła.");
+            }
+        } catch (error) {
+            setErrorMessage("Błąd połączenia z serwerem.");
+        }
+    };
+
+
+
+
+
     return (
         <div className="settings-container">
             <ClientNavbar/>
             <h1>Ustawienia konta</h1>
             <hr className="section-divider"/>
             <h2>Edytuj informacje o sobie</h2>
-            <form className="settings-form" onSubmit={handleSubmit}>
+            <form className="settings-form" onSubmit={handleProfileUpdate}>
                 <div className="form-group">
                     <label>Imię</label>
                     <input
@@ -86,13 +188,13 @@ export const SettingsPage = () => {
             </form>
             <hr className="section-divider"/>
             <h2>Zmień hasło</h2>
-            <form className="settings-form" onSubmit={handleSubmit}>
+            <form className="settings-form" onSubmit={handleChangePassword}>
                 <div className="form-group">
                     <label>Aktualne hasło</label>
                     <input
                         type="password"
-                        name="currentPassword"
-                        value={formData.password || ""}
+                        name="oldPassword"
+                        value={formData.oldPassword}
                         onChange={handleChange}
                     />
                 </div>
@@ -100,7 +202,7 @@ export const SettingsPage = () => {
                     <label>Nowe hasło</label>
                     <input
                         type="password"
-                        name="password"
+                        name="newPassword"
                         value={formData.newPassword}
                         onChange={handleChange}
                     />
