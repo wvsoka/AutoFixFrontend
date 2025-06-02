@@ -66,9 +66,17 @@ const AppointmentCard = ({
 				)}
 
 				{appointment.status === "confirmed" && (
-					<span className="px-3 py-1 bg-blue-100 text-blue-700 rounded text-sm">
-                        Potwierdzona
-                    </span>
+					<div className="flex flex-col items-end gap-2">
+						<span className="px-3 py-1 bg-blue-100 text-blue-700 rounded text-sm">
+							Potwierdzona
+						</span>
+					<button
+						className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 text-sm"
+						onClick={() => onStatusClick(appointment, "completed")}
+					>
+						Oznacz jako zakończona
+					</button>
+					</div>
 				)}
 
 				{appointment.status === "cancelled" && (
@@ -193,6 +201,9 @@ const MechanicAppointmentsPage = () => {
 							{confirmDialog.status === "cancelled" && (
 								<>odwołać wizytę "{confirmDialog.appointment.service.name}" dla {confirmDialog.appointment.client_user.name} {confirmDialog.appointment.client_user.surname} w dniu {dayjs(confirmDialog.appointment.date).format("D MMMM YYYY, HH:mm")}?</>
 							)}
+							{confirmDialog.status === "completed" && (
+								<>oznaczyć jako <strong>zakończoną</strong> wizytę "{confirmDialog.appointment.service.name}" dla {confirmDialog.appointment.client_user.name} {confirmDialog.appointment.client_user.surname} w dniu {dayjs(confirmDialog.appointment.date).format("D MMMM YYYY, HH:mm")}?</>
+							)}
 						</p>
 						<div className="flex justify-end gap-2">
 							<button
@@ -204,13 +215,20 @@ const MechanicAppointmentsPage = () => {
 								Anuluj
 							</button>
 							<button
-								className={`px-4 py-2 rounded text-white ${confirmDialog.status === "confirmed"
-									? "bg-green-600 hover:bg-green-700"
-									: "bg-red-600 hover:bg-red-700"
+								className={`px-4 py-2 rounded text-white ${
+									confirmDialog.status === "confirmed"
+										? "bg-green-600 hover:bg-green-700"
+										: confirmDialog.status === "cancelled"
+										? "bg-red-600 hover:bg-red-700"
+										: "bg-blue-600 hover:bg-blue-700"
 								}`}
 								onClick={handleConfirm}
 							>
-								Tak, {confirmDialog.status === "confirmed" ? "potwierdź" : "odwołaj"}
+								Tak, {confirmDialog.status === "confirmed"
+									? "potwierdź"
+									: confirmDialog.status === "cancelled"
+									? "odwołaj"
+									: "zakończ"}
 							</button>
 						</div>
 					</div>

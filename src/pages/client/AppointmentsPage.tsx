@@ -62,11 +62,8 @@ const AppointmentCard = ({ appointment }: { appointment: Appointment }) => {
     const handleSubmit = async () => {
         try {
             await axiosInstance.post(`/api/reviews/service/${appointment.service.id}/reviews/`, {
-                service_id: appointment.service.id,
-                data: {
-                    note: rating,
-                    content: comment,
-                },
+                note: rating,
+                content: comment,
             });
 
             alert('Dziękujemy za opinię!');
