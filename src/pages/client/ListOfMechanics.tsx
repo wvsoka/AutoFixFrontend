@@ -62,7 +62,7 @@ const ListOfMechanics: React.FC = () => {
                             <div className="mechanic-avatar"/>
                             <div className="mechanic-details">
                                 <div className="mechanic-name">{mech.name}</div>
-                                <div className="mechanic-address">{mech.address}</div>
+                                <div className="mechanic-address">{mech.address}, {mech.city}</div>
                                 <div className="mechanic-support">{mech.description}</div>
                             </div>
                         </div>
