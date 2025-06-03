@@ -16,39 +16,6 @@ interface Appointment {
     status: string;
 }
 
-const demoAppointments: Appointment[] = [
-	{
-		id: 1001,
-        mechanic: "Love Cars Company",
-        service: {
-            id: 0,
-        },
-        service_name: "Wymiana opon",
-		date: "2025-05-16T10:00:00",
-        status: "completed",
-	},
-	{
-		id: 2002,
-		mechanic: "MarianFix",
-        service: {
-            id: 0,
-        },
-        service_name: "Diagnostyka komputerowa",
-		date: "2025-05-21T09:30:00",
-        status: "pending",
-	},
-    {
-		id: 3003,
-		mechanic: "Warsztat Samochodowy Antoni Piekarz",
-        service: {
-            id: 0,
-        },
-        service_name: "Wymiana oleju",
-		date: "2025-05-28T12:00:00",
-        status: "confirmed",
-	},
-];
-
 const AppointmentCard = ({ appointment }: { appointment: Appointment }) => {
     const parsedDate = dayjs(appointment.date);
     const formattedDate = parsedDate.format("D MMMM YYYY");
@@ -188,7 +155,7 @@ const AppointmentsPage = () => {
                     status: item.status,
                 }));
 
-                const merged = [...mapped, ...demoAppointments];
+                const merged = [...mapped];
                 setAppointments(merged);
             })
         .catch((err) => console.error("Błąd podczas pobierania danych:", err))
@@ -215,6 +182,13 @@ const AppointmentsPage = () => {
         <section className="mt-6">
             <h2 className="text-xl font-bold mb-2">Oczekujące wizyty</h2>
             {filterByStatus("pending").map((a) => (
+                <AppointmentCard key={a.id} appointment={a} />
+            ))}
+        </section>
+        
+        <section className="mt-6">
+            <h2 className="text-xl font-bold mb-2">Odwołane wizyty</h2>
+            {filterByStatus("cancelled").map((a) => (
                 <AppointmentCard key={a.id} appointment={a} />
             ))}
         </section>
