@@ -49,7 +49,7 @@ export const MechanicReviewsPage = () => {
                 }
 
                 const processed: Opinion[] = reviews.map((r) => ({
-                    rating: Math.round(r.note) / 2,
+                    rating: Math.round(r.note),
                     title: r.service_name, // zamiast ID usługi
                     description: r.content,
                     author: r.user_email, // zamiast ID użytkownika
@@ -61,7 +61,7 @@ export const MechanicReviewsPage = () => {
                 setOpinions(processed);
 
                 const avgNote = reviews.reduce((sum, r) => sum + r.note, 0) / reviews.length;
-                setAverageRating(avgNote / 2);
+                setAverageRating(avgNote);
             })
             .catch((error) => {
                 console.error("Błąd przy pobieraniu danych:", error);
