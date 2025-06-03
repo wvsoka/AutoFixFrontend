@@ -57,9 +57,8 @@ const AppointmentCard = ({ appointment }: { appointment: Appointment }) => {
                     {formattedDate} <br />
                     {time}, {day}
                 </p>
-                {appointment.status === "confirmed" && (
+                {(appointment.status === "confirmed" || appointment.status === "pending") && (
                     <div className="space-x-2">
-                        <button className="text-blue-600 hover:underline">Przełóż</button>
                         <button className="text-red-600 hover:underline"
                             onClick={async () => {
                                 if (!window.confirm("Czy na pewno odwołać wizytę?")) return;
