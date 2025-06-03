@@ -51,6 +51,7 @@ const WorkshopPage: React.FC = () => {
 
                 const opinionsRes = await axiosInstance.get(`/api/reviews/mechanic/${mechanicId}/reviews/`);
                 setOpinions(opinionsRes.data);
+                console.log("Opinions:", opinionsRes.data); // Dodaj to
 
                 const ratingRes = await axiosInstance.get(`/api/reviews/mechanic/${mechanicId}/rating/`);
                 setAverageRating(ratingRes.data.average_rating);
@@ -185,11 +186,11 @@ const WorkshopPage: React.FC = () => {
             {opinions.map((op: any) => (
                 <OpinionCard
                     key={op.id}
-                    rating={op.rating}
+                    rating={op.note}
                     title={op.service_name}
-                    description={op.description}
-                    author={op.client_name}
-                    date={op.date}
+                    description={op.content}
+                    author={op.user_email}
+                    date={new Date(op.created_at).toLocaleDateString("pl-PL")}
                     avatarUrl="/user.png"
                 />
             ))}
