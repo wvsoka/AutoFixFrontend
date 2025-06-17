@@ -18,6 +18,7 @@ interface Mechanic {
 
 const ListOfMechanics: React.FC = () => {
     const [mechanics, setMechanics] = useState<Mechanic[]>([]);
+    const [searchTerm, setSearchTerm] = useState<string>('');
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -36,6 +37,18 @@ const ListOfMechanics: React.FC = () => {
         fetchData();
     }, []);
 
+    // Filtrowanie tylko, gdy wpisano 3+ znaki
+    const filteredMechanics = searchTerm.length >= 3
+        ? mechanics.filter((mech) => {
+            const term = searchTerm.toLowerCase();
+            return (
+                mech.name.toLowerCase().includes(term) ||
+                mech.description.toLowerCase().includes(term) ||
+                mech.city.toLowerCase().includes(term)
+            );
+        })
+        : mechanics;
+
     return (
         <div className="client-mech-list">
             <ClientNavbar />
@@ -48,30 +61,39 @@ const ListOfMechanics: React.FC = () => {
             >
                 <h1>Czego dzisiaj potrzebujesz?</h1>
                 <div className="search-bar">
-                    <input type="text" placeholder="Wyszukaj usługę, której szukasz..."/>
+                    <input
+                        type="text"
+                        placeholder="Wyszukaj usługę, której szukasz..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                    />
                     <button className="search-icon">
-                        <SearchIcon className="search-icon-svg"/>
+                        <SearchIcon className="search-icon-svg" />
                     </button>
                 </div>
             </section>
 
             <section className="mechanic-list">
-                {mechanics.map((mech) => (
-                    <div className="mechanic-card" key={mech.id}>
-                        <div className="mechanic-info">
-                            <div className="mechanic-avatar"/>
-                            <div className="mechanic-details">
-                                <div className="mechanic-name">{mech.name}</div>
-                                <div className="mechanic-address">{mech.address}, {mech.city}</div>
-                                <div className="mechanic-support">{mech.description}</div>
+                {filteredMechanics.length > 0 ? (
+                    filteredMechanics.map((mech) => (
+                        <div className="mechanic-card" key={mech.id}>
+                            <div className="mechanic-info">
+                                <div className="mechanic-avatar" />
+                                <div className="mechanic-details">
+                                    <div className="mechanic-name">{mech.name}</div>
+                                    <div className="mechanic-address">{mech.address}, {mech.city}</div>
+                                    <div className="mechanic-support">{mech.description}</div>
+                                </div>
+                            </div>
+                            <div className="mechanic-rating">
+                                {'★'.repeat(5)}
+                                <ArrowRightButton onClick={() => navigate(`/workshop/${mech.id}`, { state: { mechanic: mech } })} />
                             </div>
                         </div>
-                        <div className="mechanic-rating">
-                            {'★'.repeat(5)}
-                            <ArrowRightButton onClick={() => navigate(`/workshop/${mech.id}`, { state: { mechanic: mech } })} />
-                        </div>
-                    </div>
-                ))}
+                    ))
+                ) : (
+                    <div className="no-results">Brak wyników spełniających kryteria.</div>
+                )}
             </section>
         </div>
     );
