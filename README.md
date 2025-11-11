@@ -1,4 +1,16 @@
-# Getting Started with Create React App
+# Car Mechanic Appointment Booking App
+
+A **React frontend** for a car mechanic appointment booking system, where users can find workshops, view availability, and manage their bookings easily.
+
+- Search for car workshops by location or service type.  
+- View available time slots for appointments.  
+- Book, update, and cancel appointments easily.  
+- Rate mechanics and their services to help other users make informed decisions.  
+- For mechanics: register and manage your own workshop, update services, and availability.
+
+---
+
+# Getting Started
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
